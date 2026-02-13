@@ -4,6 +4,18 @@ Attached in my Coding Assessment for Aurora
 
 Video Demo Link - https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing
 
+### Running the app ###
+Add both API keys to **app/.env**:
+```
+OPENAI_API_KEY=your_key      # ChatGPT/Gemini image analysis
+ELEVENLABS_API_KEY=your_key  # Eleven Labs TTS
+```
+
+Then run build_runner in the app to generate envied code:
+```
+cd app && dart run build_runner build -d
+``` 
+
 ### The app contains the following ###
 
 ### Launch

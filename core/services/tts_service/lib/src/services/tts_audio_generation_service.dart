@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:tts_service/src/abstract_tts_service.dart';
-import 'package:tts_service/src/env/env.dart';
 
 /// Fallback voice if v2/voices returns empty.
 const _fallbackVoiceId = '21m00Tcm4TlvDq8ikWAM';
@@ -14,12 +13,17 @@ const _fallbackVoiceId = '21m00Tcm4TlvDq8ikWAM';
 const _defaultModelId = 'eleven_turbo_v2_5';
 
 class TtsAudioGenerationService implements AbstractTtsService {
-  TtsAudioGenerationService._internal();
+  TtsAudioGenerationService._internal({required String apiKey})
+      : _apiKey = apiKey.trim();
 
-  static final TtsAudioGenerationService _instance =
-      TtsAudioGenerationService._internal();
+  static TtsAudioGenerationService? _instance;
+  final String _apiKey;
 
-  factory TtsAudioGenerationService() => _instance;
+  /// Requires [apiKey] from host app (e.g. app/.env).
+  factory TtsAudioGenerationService({required String apiKey}) {
+    _instance ??= TtsAudioGenerationService._internal(apiKey: apiKey);
+    return _instance!;
+  }
 
   Dio? _dio;
   final player = AudioPlayer();
@@ -33,7 +37,7 @@ class TtsAudioGenerationService implements AbstractTtsService {
 
   /// Loads API key, sets up Dio instance if needed.
   Future<void> initialize() async {
-    key = Env.elevenLabsApiKey.trim();
+    key = _apiKey;
 
     // Initialize Dio if not already instantiated
     _dio ??= Dio(
@@ -54,6 +58,7 @@ class TtsAudioGenerationService implements AbstractTtsService {
     String text, {
     void Function()? onPlaybackComplete,
   }) async {
+   
     if (!_initialized) await initialize();
     if (_isSpeaking) await stop();
 

@@ -22,10 +22,10 @@ Future<void> configureDependencies() async {
   // Initialize pipeline (OpenAI client etc) before first use
   await _sl.get<AbstractImageAnalysisPipeline>().initialize();
 
-  // TTS
+  // TTS – key from app/.env
   _sl.registerLazySingleton<AbstractTtsService>(
-    () => TtsAudioGenerationService(),
-  );
+    () => TtsAudioGenerationService(apiKey: Env.elevenLabsApiKey),
+  ); // apiKey is required
 
   // Share
   _sl.registerLazySingleton<AbstractShareService>(
