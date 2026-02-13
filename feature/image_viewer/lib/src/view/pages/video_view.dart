@@ -28,12 +28,7 @@ class _VideoViewState extends State<VideoView> {
     }
   }
 
-  void _handleTap() {
-    if (_controller.value.isPlaying) {
-      _controller.pause();
-    }
-    widget.onVideoComplete?.call();
-  }
+
 
   @override
   void initState() {
@@ -66,11 +61,7 @@ class _VideoViewState extends State<VideoView> {
           AspectRatio(
             key: const ValueKey('video'),
             aspectRatio: _controller.value.aspectRatio,
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: _handleTap,
-              child: VideoPlayer(_controller),
-            ),
+            child: VideoPlayer(_controller),
           ),
       ],
     );

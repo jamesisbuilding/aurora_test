@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_analysis_service/image_analysis_service.dart';
 import 'package:image_viewer/src/bloc/image_viewer_bloc.dart';
+import 'package:image_viewer/src/utils/image_provider_utils.dart';
 import 'package:image_viewer/src/bloc/image_viewer_state.dart';
 import 'package:image_viewer/src/cubit/cubit.dart';
 import 'package:image_viewer/src/view/widgets/notch.dart';
@@ -190,7 +191,15 @@ class _ControlBarState extends State<ControlBar>
                                         return prev.selectedImage?.uid !=
                                                 curr.selectedImage?.uid ||
                                             curr.loadingType !=
-                                                prev.loadingType;
+                                                prev.loadingType ||
+                                            (curr.fetchedImages.isNotEmpty !=
+                                                prev.fetchedImages.isNotEmpty) ||
+                                            (curr.fetchedImages.isNotEmpty &&
+                                                (prev.fetchedImages.isEmpty ||
+                                                    prev.fetchedImages.first
+                                                            .uid !=
+                                                        curr.fetchedImages
+                                                            .first.uid));
                                       },
                                       builder: (context, state) {
                                         final isLightMode =
@@ -198,8 +207,7 @@ class _ControlBarState extends State<ControlBar>
                                             Brightness.light;
                                         Color? bgColor;
                                         Color? fgColor;
-                                        // state.maybeWhen(
-                                        //   loaded: (_, _, selectedImage) {
+
                                         final lightest =
                                             state.selectedImage?.lightestColor;
                                         final darkest =
@@ -210,15 +218,28 @@ class _ControlBarState extends State<ControlBar>
                                         fgColor = isLightMode
                                             ? darkest
                                             : lightest;
-                                        //   },
-                                        //   orElse: () {},
-                                        // );
+
+                                        final atEndOfVisible =
+                                            state.visibleImages.isNotEmpty &&
+                                                state.selectedImage ==
+                                                    state.visibleImages.last;
+                                        final imageForBackground =
+                                            atEndOfVisible &&
+                                                    state.fetchedImages
+                                                        .isNotEmpty
+                                                ? state.fetchedImages.first
+                                                : state.selectedImage;
+
                                         return BlocBuilder<TtsCubit, TtsState>(
                                           builder: (context, ttsState) =>
                                               MainButton(
                                                 label: 'another',
                                                 backgroundColor: bgColor,
                                                 foregroundColor: fgColor,
+                                                backgroundImage:
+                                                    imageProviderForImage(
+                                                  imageForBackground,
+                                                ),
                                                 onTap: () =>
                                                     widget.onAnotherTap(),
                                                 mode:
@@ -244,7 +265,6 @@ class _ControlBarState extends State<ControlBar>
                               const SizedBox(width: 24),
                               CustomIconButton(
                                 onTap: () {
-                                  
                                   widget.onShareTap?.call(state.selectedImage);
                                 },
                                 icon: Assets.icons.send.designImage(
@@ -323,8 +343,7 @@ class _FavouriteStarButton extends StatelessWidget {
           icon: Assets.icons.star.designImage(
             height: 28,
             width: 28,
-            color:
-                isFavourite ? Colors.yellow : theme.colorScheme.onSurface,
+            color: isFavourite ? Colors.yellow : theme.colorScheme.onSurface,
           ),
         );
       },

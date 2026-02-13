@@ -19,15 +19,16 @@ Attached in my Coding Assessment for Aurora
 10. Image visualisation fallbacks – we save the image locally and use cached network images so we have stable loading into the widget (no empty state)
 
 ### UI
-11. Linear interpolation between colors – as the carousel moves the background palette changes with respect to the ratio of which image is primarily visible
-12. Expandable image cards – tap an image to expand and see the full title and description, with the play button for TTS
-13. Accessibility – interfaces with Eleven Labs API to read out the short story/description of the image
-14. Favourite and Share – users can favourite and share images (share uses the local image and description)
-15. Dynamic 'Another' button – changes colour based on the image's color palette, ensuring at least 7 contrast levels for accessibility
-16. Light and Dark mode – toggle via the button at the top right
-17. Control bar – collapsible and updates to changes in selected image colors
-18. Main button – dynamic and changes depending on whether we're in image view, loading view or expanded (play/pause for TTS)
-19. Error dialogs – we surface fetch failures and duplicate exhaustion so the user knows what's going on
+11. Expansion mode - expand the image such that you can see the title, description and colour palette of the image
+12. Linear interpolation between colors – as the carousel moves the background palette changes with respect to the ratio of which image is primarily visible
+13. Expandable image cards – tap an image to expand and see the full title and description, with the play button for TTS
+14. Accessibility – interfaces with Eleven Labs API to read out the short story/description of the image
+15. Favourite and Share – users can favourite and share images (share uses the local image and description)
+16. Dynamic 'Another' button – changes colour based on the image's color palette, ensuring at least 7 contrast levels for accessibility and holds next up image or selected image as a faint background. 
+17. Light and Dark mode – toggle via the button at the top right
+18. Control bar – collapsible and updates to changes in selected image colors
+19. Main button – dynamic and changes depending on whether we're in image view, loading view or expanded (play/pause for TTS)
+20. Error dialogs – we surface fetch failures and duplicate exhaustion so the user knows what's going on
 
 
 ### Architecture

@@ -2,6 +2,7 @@ import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_viewer/image_viewer.dart';
+import 'package:image_viewer/src/utils/image_provider_utils.dart';
 
 class ControlBarMainButton extends StatelessWidget {
   final Function onAnotherTap;
@@ -21,7 +22,12 @@ class ControlBarMainButton extends StatelessWidget {
       child: BlocBuilder<ImageViewerBloc, ImageViewerState>(
         buildWhen: (prev, curr) {
           return prev.selectedImage?.uid != curr.selectedImage?.uid ||
-              curr.loadingType != prev.loadingType;
+              curr.loadingType != prev.loadingType ||
+              (curr.fetchedImages.isNotEmpty != prev.fetchedImages.isNotEmpty) ||
+              (curr.fetchedImages.isNotEmpty &&
+                  (prev.fetchedImages.isEmpty ||
+                      prev.fetchedImages.first.uid !=
+                          curr.fetchedImages.first.uid));
         },
         builder: (context, state) {
           final isLightMode = Theme.of(context).brightness == Brightness.light;
@@ -33,11 +39,19 @@ class ControlBarMainButton extends StatelessWidget {
           bgColor = isLightMode ? lightest : darkest;
           fgColor = isLightMode ? darkest : lightest;
 
+          final atEndOfVisible = state.visibleImages.isNotEmpty &&
+              state.selectedImage == state.visibleImages.last;
+          final imageForBackground = atEndOfVisible &&
+                  state.fetchedImages.isNotEmpty
+              ? state.fetchedImages.first
+              : state.selectedImage;
+
           return BlocBuilder<TtsCubit, TtsState>(
             builder: (context, ttsState) => MainButton(
               label: 'another',
               backgroundColor: bgColor,
               foregroundColor: fgColor,
+              backgroundImage: imageProviderForImage(imageForBackground),
               onTap: () => onAnotherTap(),
               mode: state.loadingType == ViewerLoadingType.manual
                   ? MainButtonMode.audio
