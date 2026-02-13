@@ -126,6 +126,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
     return SizedBox(
       height: MediaQuery.sizeOf(context).height,
       child: PageView.builder(
+        physics: _expandedID.isNotEmpty ? const NeverScrollableScrollPhysics() : null,
         controller: _pageController,
 
         padEnds: true,
