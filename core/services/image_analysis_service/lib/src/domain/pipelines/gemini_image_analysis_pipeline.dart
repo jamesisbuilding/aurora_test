@@ -54,13 +54,13 @@ class GeminiImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
       final map = jsonDecode(response.text!) as Map<String, dynamic>;
       return ImageCaptionResult(
         title: map['title'] as String? ?? 'No title',
-        description: map['description'] as String? ?? 'No Description',
+        description: map['description'] as String? ?? 'No Caption',
       );
     } catch (e, stack) {
       debugPrint('[GeminiImageAnalysisPipeline] Error: $e\n$stack');
       return const ImageCaptionResult(
         title: 'Error',
-        description: 'Could not generate description',
+        description: 'Could not generate story',
       );
     }
   }

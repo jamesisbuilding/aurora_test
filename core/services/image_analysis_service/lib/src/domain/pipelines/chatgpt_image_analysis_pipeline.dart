@@ -31,7 +31,8 @@ class ChatGptImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
   }
 
   static final String _prompt = '''
-  You are to describe the image attached and return a JSON object accurately telling a short story about the image, as if you're bringing the image to life.
+  You are to describe the image attached and return a JSON object accurately telling what this image represents in terms of a high-networth excursion. 
+  This is for ultra rich, so explain as if it's for them. Max 100 words.
   The JSON schema is as follows : {'title': your title, 'description': your description}. No markdown, striclty JSON output''';
 
   @override
@@ -78,7 +79,6 @@ class ChatGptImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
 
       final content = response?.choices.first.message.content;
 
-    
       if (content == null || content.isEmpty) {
         throw Exception('No content in OpenAI response.');
       }

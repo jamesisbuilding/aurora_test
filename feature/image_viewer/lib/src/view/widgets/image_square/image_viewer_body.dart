@@ -1,23 +1,23 @@
 import 'package:delayed_display/delayed_display.dart';
 import 'package:flutter/material.dart';
+import 'package:image_analysis_service/image_analysis_service.dart';
+import 'package:image_viewer/src/view/widgets/image_square/palette_explosion.dart';
 import 'package:tts_service/tts_service.dart';
 
 class ImageViewerBody extends StatelessWidget {
-  final String title;
-  final String description;
-  final List<Color> colorPalette;
+  final ImageModel image; 
   final TtsCurrentWord? currentWord;
-  final Color? lightestColor;
-  final Color? darkestColor;
+ 
+  final Function(bool) onColorsExpanded;
+  final bool visible;
 
   const ImageViewerBody({
     super.key,
-    required this.title,
-    required this.description,
-    required this.colorPalette,
+    required this.image, 
+    required this.onColorsExpanded,
+    required this.visible,
     this.currentWord,
-    this.lightestColor,
-    this.darkestColor,
+
   });
 
   List<String> _words(String text) =>
@@ -36,10 +36,15 @@ class ImageViewerBody extends StatelessWidget {
     final highlightBg = theme.colorScheme.onSurface;
     final highlightFg = theme.colorScheme.surface;
     final highlightStyle = baseStyle.copyWith(
-      backgroundColor: highlightBg.withValues(alpha: 0.5),
+      backgroundColor: highlightBg.withAlpha((0.5 * 255).toInt()),
       color: highlightFg,
     );
     final spans = <InlineSpan>[];
+
+    if (isTitle) {
+      spans.add(TextSpan(text: '"', style: baseStyle));
+    }
+
     for (var i = 0; i < words.length; i++) {
       final match =
           currentWord != null &&
@@ -48,9 +53,15 @@ class ImageViewerBody extends StatelessWidget {
       spans.add(
         TextSpan(text: words[i], style: match ? highlightStyle : baseStyle),
       );
-      if (i < words.length - 1)
+      if (i < words.length - 1) {
         spans.add(TextSpan(text: ' ', style: baseStyle));
+      }
     }
+
+    if (isTitle) {
+      spans.add(TextSpan(text: '"', style: baseStyle));
+    }
+
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(style: baseStyle, children: spans),
@@ -62,40 +73,39 @@ class ImageViewerBody extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        DelayedDisplay(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-            child: _buildHighlightableText(context, title, true),
+        AnimatedOpacity(
+          opacity: visible ? 1 : 0,
+          duration: const Duration(milliseconds: 250),
+          child: DelayedDisplay(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12,
+              ),
+              child: _buildHighlightableText(context, image.title, true),
+            ),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(colorPalette.length, (index) {
-            return DelayedDisplay(
-              delay: Duration(milliseconds: 100 * index),
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  height: 12,
-                  width: 12,
-                  decoration: BoxDecoration(
-                    color: colorPalette[index],
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }),
+
+        PaletteInteraction(
+          colors: image.colorPalette,
+          image: image,
+          onChanged: (expanded) => onColorsExpanded(expanded),
         ),
-        DelayedDisplay(
-          delay: const Duration(milliseconds: 600),
-          slidingBeginOffset: const Offset(0, 0.05),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-            child: _buildHighlightableText(context, description, false),
+
+        AnimatedOpacity(
+          opacity: visible ? 1 : 0,
+          duration: const Duration(milliseconds: 250),
+          child: DelayedDisplay(
+            delay: const Duration(milliseconds: 600),
+            slidingBeginOffset: const Offset(0, 0.05),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12,
+              ),
+              child: _buildHighlightableText(context, image.description, false),
+            ),
           ),
         ),
       ],

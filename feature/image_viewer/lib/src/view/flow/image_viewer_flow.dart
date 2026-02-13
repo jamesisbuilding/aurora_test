@@ -47,6 +47,7 @@ class _ImageViewerFlowState extends State<ImageViewerFlow> {
         ),
         BlocProvider(create: (_) => getIt<TtsCubit>()),
         BlocProvider(create: (_) => getIt<FavouritesCubit>()),
+        BlocProvider(create: (_) => getIt<CollectedColorsCubit>()),
       ],
       child: Stack(
         fit: StackFit.expand,

@@ -73,7 +73,7 @@ class TtsAudioGenerationService implements AbstractTtsService {
     if (_isSpeaking) await stop();
 
     _isSpeaking = true;
-    final text = '$title $description'.trim();
+    final text = '$title. $description'.trim();
     if (text.isEmpty) {
       _isSpeaking = false;
       return;

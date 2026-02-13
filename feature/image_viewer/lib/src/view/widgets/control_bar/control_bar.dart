@@ -41,7 +41,7 @@ class _ControlBarState extends State<ControlBar>
     with SingleTickerProviderStateMixin {
   double _slideOffsetPx = 0;
   double _contentHeight = 0;
-  bool _controlBarExpanded = false;
+  bool _controlBarExpanded = true;
   late AnimationController _snapController;
   late Animation<double> _snapAnimation;
 
