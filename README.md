@@ -2,6 +2,9 @@
 
 Attached in my Coding Assessment for Aurora
 
+### IMGO
+Introducing IMGO - the feed-based luxury travel app that combines in-app story telling with selecting your next excursion. Don't READ all about it, LISTEN to it first; explained by your AI travel assistant. Then save and share with friends and get your next adventure started!
+
 Video Demo Link - https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing
 
 Please view the 'audio and text highlighting' video to see a smaller demo with sound (intro video, text highlighting and text to speech)
@@ -82,7 +85,9 @@ The project is structured as a modular Flutter app – each feature and core con
 
 The view layer (control bar, image carousel, main view) could be broken down further and optimised. Right now some widgets are doing more than they should and the nesting can get deep. I prioritised UX and polish and getting the flow and behaviour right over refactoring the UI into smaller, more composable pieces. That refactor would be a natural next step – extracting more presentational components, tightening the separation between layout and logic, and reducing rebuild scope.
 
-I would make Eleven Labs (TTS) and LLM (ChatGPT/Gemini) failures more robust – retries, fallbacks, clearer error handling and user feedback when those services fail.
+I would make Eleven Labs (TTS) and LLM (ChatGPT/Gemini) failures more robust – retries, fallbacks, clearer error handling and user feedback when those services fail. 
+
+A key part I would optimise is the preview image in the 'Another Button' to transition seamlessly. This is essential and I have rectified in the attached code. 
 
 **No Retrofit – raw Dio**
 
