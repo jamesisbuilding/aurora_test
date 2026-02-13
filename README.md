@@ -2,6 +2,34 @@
 
 Attached in my Coding Assessment for Aurora
 
+### The app contains the following ###
+
+### Launch
+1. Native splash screen (platform launch screen)
+2. Launcher video 
+3. Streaming in initial batch of images – preloads whilst the video plays
+
+### Fetching and Processing Images
+4. Background fetch – awaiting more images in the background as the user scrolls, triggered by their position in the carousel
+5. Manual fetch – users can request more images via the another button when we don't have any prefetched
+6. Prefetch caching – if we have images preloaded we give the impression of low latency
+7. Data augmentation – use of an LLM interface (ChatGPT or Gemini) to provide the image with a title and description for accessibility
+8. Duplication management – ensure no images are duplicated, using both URL checking and pixel color analysis. If we get 3 duplicate images in a row, we notify the user
+9. Exponential back off – if we receive an error from our image fetching service we retry with exponential back off until the target batch is satisfied or we hit our attempt limit
+10. Image visualisation fallbacks – we save the image locally and use cached network images so we have stable loading into the widget (no empty state)
+
+### UI
+11. Linear interpolation between colors – as the carousel moves the background palette changes with respect to the ratio of which image is primarily visible
+12. Expandable image cards – tap an image to expand and see the full title and description, with the play button for TTS
+13. Accessibility – interfaces with Eleven Labs API to read out the short story/description of the image
+14. Favourite and Share – users can favourite and share images (share uses the local image and description)
+15. Dynamic 'Another' button – changes colour based on the image's color palette, ensuring at least 7 contrast levels for accessibility
+16. Light and Dark mode – toggle via the button at the top right
+17. Control bar – collapsible and updates to changes in selected image colors
+18. Main button – dynamic and changes depending on whether we're in image view, loading view or expanded (play/pause for TTS)
+19. Error dialogs – we surface fetch failures and duplicate exhaustion so the user knows what's going on
+
+
 ### Architecture
 
 The project is structured as a modular Flutter app – each feature and core concern lives in its own package so we can slot things together and keep dependencies clear.
@@ -44,31 +72,3 @@ API calls use Dio directly rather than Retrofit. For this project we only have a
 
 Polish and end experience were the key focus here – making it feel good to use, with smooth transitions, clear feedback and no rough edges.
 
-
-
-### The app contains the following ###
-
-### Launch
-1. Native splash screen (platform launch screen)
-2. Launcher video 
-3. Streaming in initial batch of images – preloads whilst the video plays
-
-### Fetching and Processing Images
-4. Background fetch – awaiting more images in the background as the user scrolls, triggered by their position in the carousel
-5. Manual fetch – users can request more images via the another button when we don't have any prefetched
-6. Prefetch caching – if we have images preloaded we give the impression of low latency
-7. Data augmentation – use of an LLM interface (ChatGPT or Gemini) to provide the image with a title and description for accessibility
-8. Duplication management – ensure no images are duplicated, using both URL checking and pixel color analysis. If we get 3 duplicate images in a row, we notify the user
-9. Exponential back off – if we receive an error from our image fetching service we retry with exponential back off until the target batch is satisfied or we hit our attempt limit
-10. Image visualisation fallbacks – we save the image locally and use cached network images so we have stable loading into the widget (no empty state)
-
-### UI
-11. Linear interpolation between colors – as the carousel moves the background palette changes with respect to the ratio of which image is primarily visible
-12. Expandable image cards – tap an image to expand and see the full title and description, with the play button for TTS
-13. Accessibility – interfaces with Eleven Labs API to read out the short story/description of the image
-14. Favourite and Share – users can favourite and share images (share uses the local image and description)
-15. Dynamic 'Another' button – changes colour based on the image's color palette, ensuring at least 7 contrast levels for accessibility
-16. Light and Dark mode – toggle via the button at the top right
-17. Control bar – collapsible and updates to changes in selected image colors
-18. Main button – dynamic and changes depending on whether we're in image view, loading view or expanded (play/pause for TTS)
-19. Error dialogs – we surface fetch failures and duplicate exhaustion so the user knows what's going on
