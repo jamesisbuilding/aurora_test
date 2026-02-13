@@ -71,7 +71,7 @@ class ChatGptImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
 
       final content = response?.choices.first.message.content;
 
-      print(content);
+    
       if (content == null || content.isEmpty) {
         throw Exception('No content in OpenAI response.');
       }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:image_analysis_service/image_analysis_service.dart';
 
 import 'package:image_viewer/src/data/datasources/image_remote_datasource.dart';
@@ -36,10 +37,10 @@ class ImageRepositoryImpl implements ImageRepository {
       var failures = 0;
       for (final url in urls) {
         if (collected.map((i) => i.url).contains(url)) {
-          print('IMAGE DUPLICATE ABORTING ANALYSIS');
+          debugPrint('[ImageRepo] IMAGE DUPLICATE ABORTING ANALYSIS');
           _duplicatesFound += 1;
 
-          print('Dups found ${_duplicatesFound}');
+        
           if (_duplicatesFound >= _maxSequentialDuplicates) {
             throw NoMoreImagesException('Too many sequential duplicates');
           }

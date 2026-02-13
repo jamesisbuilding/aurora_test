@@ -123,7 +123,7 @@ class _ImageViewerContentState extends State<_ImageViewerContent> {
   }
 
   _toggleExpandedView({required bool expanded}) {
-    print('Toggling expanded view ${expanded}');
+   
     setState(() {
       _expandedView = expanded;
     });
@@ -276,7 +276,7 @@ class _CarouselControllerScopeState extends State<_CarouselControllerScope> {
         widget.selectedImage != null &&
         _pageController == null) {
       _initController();
-      print(widget.selectedImage?.darkestColor);
+     
       setState(() {});
     }
   }

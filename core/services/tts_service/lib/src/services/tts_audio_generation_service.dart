@@ -59,7 +59,6 @@ class TtsAudioGenerationService implements AbstractTtsService {
 
     _isSpeaking = true;
     try {
-      print(key);
       final url = 'https://api.elevenlabs.io/v1/text-to-speech/$_voiceId';
       final data = {
         'text': text,

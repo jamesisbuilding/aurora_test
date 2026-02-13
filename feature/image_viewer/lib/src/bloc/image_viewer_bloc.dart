@@ -37,7 +37,7 @@ class ImageViewerBloc extends Bloc<ImageViewerEvent, ImageViewerState> {
           existingImages: existingImages,
         )) {
           allImages = [...allImages, image];
-          print('image recieved');
+        
           emit(
             state.copyWith(
               loadingType: allImages.length != event.count
@@ -85,7 +85,7 @@ class ImageViewerBloc extends Bloc<ImageViewerEvent, ImageViewerState> {
 
   void _anotherImageEvent(event, emit) {
     if (state.fetchedImages.isNotEmpty) {
-      print('We\'ve got more images');
+    
       List<ImageModel> currentlyVisible = List.from(state.visibleImages);
       currentlyVisible.add(state.fetchedImages.first);
       List<ImageModel> fetchedImages = List.from(state.fetchedImages);
@@ -100,8 +100,6 @@ class ImageViewerBloc extends Bloc<ImageViewerEvent, ImageViewerState> {
 
       _navigateCarousel();
     } else {
-      print('We need to get more images');
-      print(state.loadingType);
       if (state.loadingType == ViewerLoadingType.none) {
         add(
           const ImageViewerFetchRequested(
