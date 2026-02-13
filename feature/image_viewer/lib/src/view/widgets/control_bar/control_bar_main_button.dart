@@ -4,18 +4,29 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_viewer/image_viewer.dart';
 import 'package:image_viewer/src/utils/image_provider_utils.dart';
 
-class ControlBarMainButton extends StatelessWidget {
-  final Function onAnotherTap;
-  final MainButtonMode mode;
-  final Function(bool) onPlayTapped;
-  final bool isExpanded;
+class ControlBarMainButton extends StatefulWidget {
   const ControlBarMainButton({
     super.key,
     required this.onAnotherTap,
     required this.mode,
     required this.onPlayTapped,
-    this.isExpanded = false,
+    this.controlBarExpanded = false,
+    required this.carouselExpanded,
   });
+
+  final Function onAnotherTap;
+  final MainButtonMode mode;
+  final Function(bool) onPlayTapped;
+  final bool controlBarExpanded;
+  final bool carouselExpanded;
+
+  @override
+  State<ControlBarMainButton> createState() => _ControlBarMainButtonState();
+}
+
+class _ControlBarMainButtonState extends State<ControlBarMainButton> {
+  ImageProvider? _cachedBackgroundImage;
+  String? _cachedImageUid;
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +45,21 @@ class ControlBarMainButton extends StatelessWidget {
         },
         builder: (context, state) {
           final isLightMode = Theme.of(context).brightness == Brightness.light;
+          final theme = Theme.of(context);
+
+          final imageForColors =
+              state.selectedImage ?? state.visibleImages.lastOrNull;
           Color? bgColor;
           Color? fgColor;
-
-          final lightest = state.selectedImage?.lightestColor;
-          final darkest = state.selectedImage?.darkestColor;
-          bgColor = isLightMode ? lightest : darkest;
-          fgColor = isLightMode ? darkest : lightest;
+          if (imageForColors != null) {
+            final lightest = imageForColors.lightestColor;
+            final darkest = imageForColors.darkestColor;
+            bgColor = isLightMode ? lightest : darkest;
+            fgColor = isLightMode ? darkest : lightest;
+          }
+          bgColor ??= theme.colorScheme.surface;
+          fgColor ??=
+              theme.textTheme.labelLarge?.color ?? theme.colorScheme.onSurface;
 
           final atEndOfVisible =
               state.visibleImages.isNotEmpty &&
@@ -51,22 +70,44 @@ class ControlBarMainButton extends StatelessWidget {
                   ? state.fetchedImages.first
                   : state.selectedImage;
 
-          final backgroundImage = imageProviderForImage(nextImageForBackground);
+          final targetProvider =
+              imageProviderForImage(nextImageForBackground);
+          final targetUid = nextImageForBackground?.uid;
+
+          if (targetUid != null && targetProvider != null) {
+            if (targetUid != _cachedImageUid) {
+              precacheImage(targetProvider, context).then((_) {
+                if (mounted && targetUid == nextImageForBackground?.uid) {
+                  setState(() {
+                    _cachedBackgroundImage = targetProvider;
+                    _cachedImageUid = targetUid;
+                  });
+                }
+              });
+            }
+          }
+
+          final effectiveBackgroundImage = targetUid == null
+              ? null
+              : (targetUid == _cachedImageUid
+                  ? targetProvider
+                  : _cachedBackgroundImage);
 
           return BlocBuilder<TtsCubit, TtsState>(
             builder: (context, ttsState) => MainButton(
               label: 'another',
               backgroundColor: bgColor,
               foregroundColor: fgColor,
-              backgroundImage: backgroundImage,
-              onTap: () => onAnotherTap(),
+              backgroundImage: effectiveBackgroundImage,
+              onTap: () => widget.onAnotherTap(),
               mode: state.loadingType == ViewerLoadingType.manual
                   ? MainButtonMode.audio
-                  : mode,
-              onPlayTapped: (playing) => onPlayTapped(playing),
+                  : widget.mode,
+              onPlayTapped: (playing) => widget.onPlayTapped(playing),
               isPlaying: ttsState.isPlaying,
               isLoading:
-                  state.loadingType == ViewerLoadingType.manual ||
+                  (state.loadingType == ViewerLoadingType.manual &&
+                      !widget.carouselExpanded) ||
                   ttsState.isLoading,
             ),
           );

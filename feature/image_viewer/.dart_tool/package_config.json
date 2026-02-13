@@ -206,12 +206,6 @@
       "languageVersion": "3.3"
     },
     {
-      "name": "envied",
-      "rootUri": "file:///Users/jamespotter/.pub-cache/hosted/pub.dev/envied-0.5.4+1",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
       "name": "equatable",
       "rootUri": "file:///Users/jamespotter/.pub-cache/hosted/pub.dev/equatable-2.0.8",
       "packageUri": "lib/",
@@ -648,6 +642,12 @@
       "rootUri": "file:///Users/jamespotter/.pub-cache/hosted/pub.dev/shimmer-3.0.0",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "shimmer_animation",
+      "rootUri": "file:///Users/jamespotter/.pub-cache/hosted/pub.dev/shimmer_animation-2.2.2+1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
     },
     {
       "name": "sky_engine",

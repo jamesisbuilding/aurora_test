@@ -60,7 +60,7 @@ class LiquidBackground extends StatefulWidget {
   State<LiquidBackground> createState() => _LiquidBackgroundState();
 }
 
-const _colorTransitionDuration = Duration(milliseconds: 400);
+const _colorTransitionDuration = Duration(milliseconds: 150);
 const _minShaderColors = 4;
 
 List<Color> _padColors(List<Color> colors) {

@@ -131,10 +131,26 @@ class _ImageCarouselState extends State<ImageCarousel> {
     widget.onExpanded(selected);
   }
 
+  Color? _backgroundColor(BuildContext context) {
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
+    final bool expanded = _expandedID.isNotEmpty;
+
+
+    if (!expanded) return Colors.transparent;
+
+    final selected =
+        widget.images.where((i) => i.uid == widget.selectedID).firstOrNull;
+    if (selected == null) return Colors.transparent;
+
+    return isLightMode ? selected.lightestColor : selected.darkestColor;
+  }
+
   @override
   Widget build(BuildContext context) {
     final itemWidth = MediaQuery.sizeOf(context).width * _viewportFraction;
-    return SizedBox(
+    return AnimatedContainer(
+      duration: const Duration(seconds: 1),
+      color: _backgroundColor(context),
       height: MediaQuery.sizeOf(context).height,
       child: PageView.builder(
         physics: _expandedID.isNotEmpty

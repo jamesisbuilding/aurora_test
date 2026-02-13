@@ -7,6 +7,8 @@ class ImageViewerBody extends StatelessWidget {
   final String description;
   final List<Color> colorPalette;
   final TtsCurrentWord? currentWord;
+  final Color? lightestColor;
+  final Color? darkestColor;
 
   const ImageViewerBody({
     super.key,
@@ -14,6 +16,8 @@ class ImageViewerBody extends StatelessWidget {
     required this.description,
     required this.colorPalette,
     this.currentWord,
+    this.lightestColor,
+    this.darkestColor,
   });
 
   List<String> _words(String text) =>
@@ -28,9 +32,12 @@ class ImageViewerBody extends StatelessWidget {
     if (words.isEmpty) return Text(text, textAlign: TextAlign.center);
     final theme = Theme.of(context);
     final baseStyle = theme.textTheme.bodyMedium ?? const TextStyle();
-    // Use only backgroundColor for highlight; fontWeight changes cause layout shift
+
+    final highlightBg = theme.colorScheme.onSurface;
+    final highlightFg = theme.colorScheme.surface;
     final highlightStyle = baseStyle.copyWith(
-      backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.5),
+      backgroundColor: highlightBg.withValues(alpha: 0.5),
+      color: highlightFg,
     );
     final spans = <InlineSpan>[];
     for (var i = 0; i < words.length; i++) {

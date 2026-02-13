@@ -35,6 +35,7 @@ dependencies:
   delayed_display: ^2.0.0
   equatable: ^2.0.7
   video_player: ^2.9.2
+  shimmer_animation: ^2.2.2+1
 
 dev_dependencies:
   flutter_test:

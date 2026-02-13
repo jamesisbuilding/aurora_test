@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +13,9 @@ const _fallbackVoiceId = '21m00Tcm4TlvDq8ikWAM';
 
 /// TTS model (matches curl: eleven_multilingual_v2).
 const _defaultModelId = 'eleven_turbo_v2_5';
+
+/// Top-level function for [compute] (must be top-level or static).
+Uint8List _decodeBase64Isolate(String input) => base64Decode(input);
 
 class TtsAudioGenerationService implements AbstractTtsService {
   TtsAudioGenerationService._internal({required String apiKey})
@@ -106,12 +110,12 @@ class TtsAudioGenerationService implements AbstractTtsService {
           throw Exception('failed-audio-bytes');
         }
 
-        String cleanBase64 = base64Audio.contains(',')
-            ? base64Audio.split(',').last
-            : base64Audio;
+        final cleanBase64 = base64Audio.contains(',')
+            ? base64Audio.split(',').last.trim()
+            : base64Audio.trim();
 
-        // 2. Decode the string into a Uint8List (List of bytes)
-        Uint8List bytes = base64Decode(cleanBase64.trim());
+        // 2. Decode the string into a Uint8List (offloaded to isolate)
+        final bytes = await compute<String, Uint8List>(_decodeBase64Isolate, cleanBase64);
 
         if (bytes.isEmpty) throw Exception('Empty audio response');
         await _completionSubscription?.cancel();

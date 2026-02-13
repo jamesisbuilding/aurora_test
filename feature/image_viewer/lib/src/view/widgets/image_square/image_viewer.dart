@@ -72,6 +72,8 @@ class _ImageViewerState extends State<ImageViewer> with AnimatedPressMixin {
                         child: ImageViewerSquare(
                           localPath: widget.image.localPath,
                           networkPath: widget.image.url,
+                          imageUid: widget.image.uid,
+                          lightestColor: widget.image.lightestColor,
                         ),
                       ),
                     ),
@@ -87,6 +89,8 @@ class _ImageViewerState extends State<ImageViewer> with AnimatedPressMixin {
                       description: widget.image.description,
                       colorPalette: widget.image.colorPalette,
                       currentWord: ttsState.currentWord,
+                      lightestColor: widget.image.lightestColor,
+                      darkestColor: widget.image.darkestColor,
                     ),
                   ),
               ],

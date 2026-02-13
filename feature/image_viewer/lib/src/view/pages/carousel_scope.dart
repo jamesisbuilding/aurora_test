@@ -130,6 +130,7 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
             onExpanded: (expanded) => widget.onExpanded(expanded),
           ),
         ControlBar(
+          carouselExpanded: widget.expandedView,
           mode: widget.expandedView
               ? MainButtonMode.audio
               : MainButtonMode.another,

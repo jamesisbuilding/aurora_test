@@ -1,10 +1,17 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:image_analysis_service/src/domain/models/image_caption_result.dart';
 import 'package:image_analysis_service/src/domain/pipelines/abstract_image_analysis_pipeline.dart';
 import 'package:mime/mime.dart';
 import 'package:openai_dart/openai_dart.dart';
+
+/// Top-level functions for [compute] (must be top-level or static).
+String _encodeBase64Isolate(Uint8List bytes) => base64Encode(bytes);
+
+Map<String, dynamic> _decodeJsonIsolate(String content) =>
+    jsonDecode(content) as Map<String, dynamic>;
 
 /// ChatGPT-based image analysis pipeline.
 /// Implement using OpenAI's vision API (e.g. gpt-4o, gpt-4-vision).
@@ -46,8 +53,8 @@ class ChatGptImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
       final mimeType =
           lookupMimeType(imagePath, headerBytes: imageBytes) ?? 'image/jpeg';
 
-      final String imageURL =
-          'data:$mimeType;base64,${base64Encode(imageBytes)}';
+      final base64String = await compute(_encodeBase64Isolate, imageBytes);
+      final String imageURL = 'data:$mimeType;base64,$base64String';
 
       final response = await _client?.createChatCompletion(
         request: CreateChatCompletionRequest(
@@ -76,7 +83,7 @@ class ChatGptImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
         throw Exception('No content in OpenAI response.');
       }
 
-      final map = jsonDecode(content) as Map<String, dynamic>;
+      final map = await compute(_decodeJsonIsolate, content);
       return ImageCaptionResult(
         title: map['title'] as String? ?? 'No title',
         description: map['description'] as String? ?? 'No description',

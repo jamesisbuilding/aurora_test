@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_analysis_service/image_analysis_service.dart';
 import 'package:image_viewer/src/bloc/image_viewer_bloc.dart';
@@ -20,6 +21,7 @@ class ControlBar extends StatefulWidget {
   final Function(bool) onPlayTapped;
   final void Function(ImageModel?)? onShareTap;
   final Color? backgroundColor;
+  final bool carouselExpanded;
 
   const ControlBar({
     super.key,
@@ -27,6 +29,7 @@ class ControlBar extends StatefulWidget {
     required this.mode,
     required this.onPlayTapped,
     required this.backgroundColor,
+    required this.carouselExpanded,
     this.onShareTap,
   });
 
@@ -38,7 +41,7 @@ class _ControlBarState extends State<ControlBar>
     with SingleTickerProviderStateMixin {
   double _slideOffsetPx = 0;
   double _contentHeight = 0;
-  bool _isExpanded = false;
+  bool _controlBarExpanded = false;
   late AnimationController _snapController;
   late Animation<double> _snapAnimation;
 
@@ -79,13 +82,19 @@ class _ControlBarState extends State<ControlBar>
     });
   }
 
+  void _onVerticalDragStart(DragStartDetails details) {
+    HapticFeedback.lightImpact();
+  }
+
   void _onVerticalDragEnd(DragEndDetails details) {
     final threshold = _collapseDistance * 0.5;
     final velocity = details.velocity.pixelsPerSecond.dy;
     final expand =
         velocity < -100 || (velocity.abs() < 100 && _slideOffsetPx < threshold);
     final target = expand ? 0.0 : _collapseDistance;
-    _isExpanded = expand;
+    _controlBarExpanded = expand;
+
+    HapticFeedback.heavyImpact();
 
     _snapAnimation = Tween<double>(begin: _slideOffsetPx, end: target).animate(
       CurvedAnimation(parent: _snapController, curve: Curves.easeOutCubic),
@@ -112,8 +121,8 @@ class _ControlBarState extends State<ControlBar>
         borderRadius: BorderRadius.circular(0),
         child: BackdropFilter(
           filter: ImageFilter.blur(
-            sigmaX: _isExpanded ? 30 : 0,
-            sigmaY: _isExpanded ? 30 : 0,
+            sigmaX: _controlBarExpanded ? 30 : 0,
+            sigmaY: _controlBarExpanded ? 30 : 0,
           ),
           child: BlocBuilder<ImageViewerBloc, ImageViewerState>(
             builder: (context, state) {
@@ -158,6 +167,7 @@ class _ControlBarState extends State<ControlBar>
                       GestureDetector(
                         onVerticalDragUpdate: _onVerticalDragUpdate,
                         onVerticalDragEnd: _onVerticalDragEnd,
+                        onVerticalDragStart: _onVerticalDragStart,
                         behavior: HitTestBehavior.opaque,
                         // NO ANIMATION: Notch is always visible!
                         child: const Padding(
@@ -173,7 +183,7 @@ class _ControlBarState extends State<ControlBar>
                       Opacity(
                         opacity: _contentOpacity,
                         child: IgnorePointer(
-                          ignoring: !_isExpanded || _isCollapsed,
+                          ignoring: !_controlBarExpanded || _isCollapsed,
                           child: Row(
                             spacing: 24,
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -186,7 +196,8 @@ class _ControlBarState extends State<ControlBar>
                                 onAnotherTap: widget.onAnotherTap,
                                 onPlayTapped: widget.onPlayTapped,
                                 mode: widget.mode,
-                                isExpanded: _isExpanded,
+                                controlBarExpanded: _controlBarExpanded,
+                                carouselExpanded: widget.carouselExpanded,
                               ),
 
                               CustomIconButton(
@@ -230,7 +241,7 @@ class _ControlBarState extends State<ControlBar>
                   if (mounted) {
                     setState(() {
                       _contentHeight = size.height;
-                      if (!_isExpanded) {
+                      if (!_controlBarExpanded) {
                         _slideOffsetPx = _collapseDistance;
                       }
                     });
