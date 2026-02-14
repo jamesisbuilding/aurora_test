@@ -18,10 +18,12 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: App – pub get, analyze, test
+      - name: App – env, build_runner, pub get, analyze, test
         run: |
+          cp .env.example app/.env
           cd app
           flutter pub get
+          dart run build_runner build -d
           flutter analyze
           flutter test
 
