@@ -1,16 +1,19 @@
-# aurora_test
+# Aurora Test App (`app/`)
 
-A new Flutter project.
+This directory is the Flutter application shell for the IMGO project.
 
-## Getting Started
+For full architecture, feature, and setup details, see the repository root README:
+- `../README.md`
 
-This project is a starting point for a Flutter application.
+## What lives here
+- `lib/main.dart` – app bootstrap + Firebase init
+- `lib/di/service_locator.dart` – dependency registration and module wiring
+- `lib/app_navigation/app_router.dart` – GoRouter configuration
+- `lib/theme/` – app-level theme mode state
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Local run (from this folder)
+```bash
+flutter pub get
+dart run build_runner build -d
+flutter run
+```
