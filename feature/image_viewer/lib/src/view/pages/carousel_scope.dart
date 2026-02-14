@@ -248,8 +248,10 @@ class _BlendedColorsSyncState extends State<_BlendedColorsSync> {
     _lastSyncedUid = widget.selectedImage.uid;
     final palette = widget.selectedImage.colorPalette;
     widget.onSync(
-      _ensureMinColors(
-        palette.isNotEmpty ? List.of(palette) : List.of(_fallbackPalette),
+      ensureMinColors(
+        palette.isNotEmpty
+            ? List.of(palette)
+            : List.of(imageViewerFallbackPalette),
       ),
     );
   }

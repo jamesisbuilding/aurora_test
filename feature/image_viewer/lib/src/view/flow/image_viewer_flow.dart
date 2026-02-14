@@ -71,6 +71,7 @@ class _ImageViewerFlowState extends State<ImageViewerFlow> {
                 ImageViewerScreen(
                   onThemeToggle: widget.onThemeToggle,
                   onShareTap: widget.onShareTap,
+                  videoComplete: _videoComplete,
                 ),
           ),
           Transform.scale(
