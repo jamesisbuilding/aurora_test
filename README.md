@@ -45,10 +45,10 @@ The app is best optimized for iPhone 17 Pro. Although it should run on other dev
 12. Linear interpolation between colors – as the carousel moves the background palette changes with respect to the ratio of which image is primarily visible
 13. Expandable image cards – tap an image to expand and see the full title and description, with the play button for TTS
 14. Accessibility – interfaces with Eleven Labs API to read out the short story/description of the image and have highlighted text on each word. 
-15. Favourite and Share – users can favourite and share images (share uses the local image and description)
+15. Favourite and Share – users can favourite and share images. Share has two modes: collapsed shares the raw image and description; expanded mode captures a screenshot of the carousel (excluding the control bar)
 16. Dynamic 'Another' button – changes colour based on the image's color palette, ensuring at least 7 contrast levels for accessibility and holds next up image or selected image as a faint background. 
 17. Light and Dark mode – toggle via the button at the top right
-18. Control bar – collapsible and updates to changes in selected image colors
+18. Control bar – collapsible and updates to changes in selected image colors. Background loading indicator sits 8px above the right edge of the control bar and moves with expand/collapse
 19. Main button – dynamic and changes depending on whether we're in image view, loading view or expanded (play/pause for TTS) Contrast ratio threshold (WCAG AAA). Minimum 7:1 for accessibility.
 20. Error dialogs – we surface fetch failures and duplicate exhaustion so the user knows what's going on
 
@@ -81,13 +81,13 @@ The project is structured as a modular Flutter app – each feature and core con
 
 ### Architectural decisions
 
-**With more time – Optimisation, Refactoring Eleven Labs and LLM resilience**
+**Refactoring and optimisation (done)**
 
-The view layer (control bar, image carousel, main view) could be broken down further and optimised. Right now some widgets are doing more than they should and the nesting can get deep. I prioritised UX and polish and getting the flow and behaviour right over refactoring the UI into smaller, more composable pieces. That refactor would be a natural next step – extracting more presentational components, tightening the separation between layout and logic, and reducing rebuild scope.
+The view layer has been refactored: the background loading indicator is integrated into the control bar and moves with it on expand/collapse. Bloc handlers use the current state at catch time (not the event’s original loading type) so error surfacing correctly tracks manual vs background loading even when state changes mid-fetch. Duplication handling uses URL deduplication before processing, pixel signature checks, `FailureType.duplicate` from the analysis service, and a bloc-level defensive filter; three sequential duplicates trigger `NoMoreImagesException` and fail fast. Image analysis requests use a 10s timeout with `TimeoutException` surfaced for manual fetches. The Another button uses precache for its color/background image to avoid flash when new images load.
 
-I would make Eleven Labs (TTS) and LLM (ChatGPT/Gemini) failures more robust – retries, fallbacks, clearer error handling and user feedback when those services fail. 
+**Still to improve – Eleven Labs and LLM resilience**
 
-A key part I would optimise is the preview image in the 'Another Button' to transition seamlessly. This is essential and I have rectified in the attached code. 
+Eleven Labs (TTS) and LLM (ChatGPT/Gemini) could be made more robust – retries, fallbacks, clearer error handling and user feedback when those services fail. 
 
 **No Retrofit – raw Dio**
 
