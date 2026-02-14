@@ -23,6 +23,7 @@ import '../data/fakes/fake_image_analysis_service.dart';
 
 /// Golden snapshot tests for UI regression safety.
 /// Run: `flutter test test/golden/golden_test.dart --update-goldens` to create/update.
+/// CI skips golden tests (goldens gitignored); run locally after UI changes.
 const _goldenSize = Size(430, 700);
 
 void main() {

@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+          channel: 'stable'
+          cache: true
+
+      - name: App – pub get, analyze, test
+        run: |
+          cd app
+          flutter pub get
+          flutter analyze
+          flutter test
+
+      - name: ImageViewer – pub get, analyze, test
+        run: |
+          cd feature/image_viewer
+          flutter pub get
+          flutter analyze
+          flutter test test/bloc test/cubit test/data test/di test/domain test/integration test/utils test/view
+
+      - name: ShareService – pub get, analyze, test
+        run: |
+          cd core/services/share_service
+          flutter pub get
+          flutter analyze
+          flutter test

@@ -8,6 +8,7 @@ Flutter coding-assessment project for Aurora.
 - **AI-augmented data** — LLM-powered titles and descriptions (ChatGPT/Gemini) for each image; accessibility-first storytelling.
 - **TTS with word highlighting** — ElevenLabs-backed text-to-speech; synchronized word highlighting for immersive playback.
 - **82.1% test coverage** — 111 tests across share service, bloc, repository, datasource, cubits, DI, widget, integration, and golden suites.
+- **CI** — GitHub Actions runs `flutter analyze` and `flutter test` on app, image_viewer, and share_service.
 
 IMGO is a feed-based, luxury-travel inspiration app with:
 - intro video + seamless transition into an image carousel,
@@ -83,11 +84,11 @@ This is architecturally sound for a small-to-mid Flutter product because depende
 - Firebase config files already present in repo (`firebase_options.dart`, platform files)
 
 ## 2) Environment variables
-Create `app/.env` with:
+Copy `.env.example` to `app/.env` and add your keys:
 
-```env
-OPENAI_API_KEY=your_key
-ELEVENLABS_API_KEY=your_key
+```bash
+cp .env.example app/.env
+# Edit app/.env with OPENAI_API_KEY and ELEVENLABS_API_KEY
 ```
 
 > Note: `OPENAI_API_KEY` is required for the configured default image-analysis pipeline (`chatGpt`).
@@ -177,7 +178,7 @@ Eleven Labs (TTS) and LLM (ChatGPT/Gemini) could be made more robust – retries
 2. Introduce environment-driven pipeline selection (ChatGPT vs Gemini) instead of code-level toggle.
 3. Add structured logging/telemetry and production log-level controls.
 4. Consider an explicit repository/result error model to remove generic thrown exceptions.
-5. Add CI checks for formatting, linting, and test execution across packages (e.g. `flutter test --coverage` in `feature/image_viewer`).
+5. ~~Add CI checks~~ — Done: `.github/workflows/ci.yml` runs `flutter pub get`, `flutter analyze`, and `flutter test` on app, image_viewer, and share_service.
 
 ---
 
@@ -185,6 +186,35 @@ Eleven Labs (TTS) and LLM (ChatGPT/Gemini) could be made more robust – retries
 
 - Current optimization target is iPhone-class form factors; broader device matrix testing is still needed.
 - External provider limits/latency (image API, OpenAI/Gemini, ElevenLabs) can impact perceived responsiveness.
+
+---
+
+## Production readiness notes
+
+For production deployment, consider adding:
+
+| Area | Recommendation |
+|------|----------------|
+| **Logging** | Structured logging (e.g. `logger` package) with configurable levels; reduce `debugPrint` in release; log fetch failures, TTS errors, and user actions for diagnostics. |
+| **Crash reporting** | Firebase Crashlytics (already have Firebase) or Sentry; ensure unhandled exceptions and Flutter framework errors are captured. |
+| **Analytics** | Firebase Analytics or equivalent for carousel engagement, share/favourite events, TTS usage, and error-surface rates. |
+| **Feature flags** | Environment-driven toggles for ChatGPT vs Gemini, TTS on/off, or A/B variants without app store releases. |
+| **Secrets** | API keys via `.env` (current); for production use a secrets manager or build-time injection; never log keys. |
+
+---
+
+## Performance notes
+
+| Component | Behaviour | Notes |
+|-----------|-----------|-------|
+| **Carousel** | `PageView` with `viewportFraction: 0.8` | Single `PageController`; images loaded on demand via `CachedNetworkImage`; `AnimatedSwitcher` for transitions. |
+| **Background shader** | `LiquidBackground` uses `FragmentShader` (`gradient.frag`) | GPU-rendered; `blendedColorsNotifier` updates drive repaints; 5-slot color interpolation is O(1) per frame. |
+| **Prefetch** | Triggered at `page == images.length - 2` | Avoids over-fetch; queue capped by bloc; deduplication reduces redundant processing. |
+| **TTS** | Streamed from ElevenLabs | Audio loads async; `TtsCubit` manages playback state; no blocking on main isolate. |
+| **Image analysis** | Per-image LLM call with 10s timeout | Batch of 3; sequential processing in repository; consider parallelisation for larger batches. |
+| **Memory** | `CachedNetworkImage` + local file fallback | Images evicted by cache; carousel disposes off-screen pages; `RepaintBoundary` on screenshot capture. |
+
+**Profiling:** Run with `flutter run --profile` and use DevTools (Performance, Memory) to verify frame times and heap usage on target devices.
 
 ---
 
@@ -215,7 +245,7 @@ Eleven Labs (TTS) and LLM (ChatGPT/Gemini) could be made more robust – retries
 | GyroParallaxCard | 5 | `test/view/widgets/gyro/gyro_parallax_card_test.dart` |
 | Golden (UI regression) | 10 | `test/golden/golden_test.dart` |
 
-**Golden tests (10):** `test/golden/golden_test.dart` — control bar collapsed/expanded/light/dark, loading indicator, intro thumbnail, expanded card (long text), error dialog, carousel collapsed, animated background. Run with `--update-goldens` to create/update. See `docs/GOLDEN_TESTS_PLAN.md` for full plan.
+**Golden tests (10):** `test/golden/golden_test.dart` — control bar collapsed/expanded/light/dark, loading indicator, intro thumbnail, expanded card (long text), error dialog, carousel collapsed, animated background. Run with `--update-goldens` to create/update. Golden PNGs are gitignored; CI skips golden tests. Run locally after UI changes. See `docs/GOLDEN_TESTS_PLAN.md` for full plan.
 
 ### ShareService unit tests
 
