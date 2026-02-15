@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:design_system/design_system.dart';
-import 'package:utils/utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -12,7 +11,6 @@ import 'package:image_viewer/src/utils/image_provider_utils.dart';
 import 'package:image_viewer/src/utils/image_viewer_color_utils.dart';
 import 'package:image_viewer/src/view/widgets/alerts/custom_dialog.dart';
 import 'package:image_viewer/src/view/widgets/background/image_viewer_background.dart';
-import 'package:image_viewer/src/view/widgets/bloc_state_debug_overlay.dart';
 import 'package:image_viewer/src/view/widgets/control_bar/control_bar.dart';
 import 'package:image_viewer/src/view/widgets/image_carousel.dart';
 import 'package:image_viewer/src/view/widgets/collected_colors/collected_colors_button.dart';
