@@ -29,7 +29,8 @@ on a real device.
 
 
 ## Demo
-- Video demo: https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing
+- Video demos: https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing  
+  **Imgo.MOV** and **Imgo - Improved Interaction Prompts and Page Axis Switching.MP4** both show full demos. The Improved video adds tap prompts (touch hint) and axis switching (scroll direction toggle); both videos are included (the second was left as-is as network was slow during that recording).
 
 ---
 
