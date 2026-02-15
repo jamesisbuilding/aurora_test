@@ -6,14 +6,14 @@ Flutter coding-assessment project for Aurora.
 - **Background prefetching** — We fetch a batch of 5 on start (first visible, rest in a queue). When the user is 2 pages from the end we prefetch 5 more in the background; when they tap "Another" we consume from the queue and refill when it drops to 1. Deduplication by URL and pixel signature with exponential backoff.
 - **Caching** — Fetched images are saved to app temp (`viewer_cache/`) and the UI prefers this local file over the network. Network URLs use `CachedNetworkImage`; the selected image is precached before showing as the button background to avoid flash.
 - **Shader-driven color interpolation** — GPU-accelerated linear interpolation of palettes across the carousel; background transitions driven by visible-image ratios.
-- **AI-augmented data** — LLM-powered titles and descriptions (ChatGPT/Gemini) for each image; accessibility-first storytelling.
+- **AI-augmented data** — LLM-powered titles and descriptions (ChatGPT/Gemini) for each image; accessibility-first description narration.
 - **TTS with word highlighting** — ElevenLabs-backed text-to-speech; synchronized word highlighting for immersive playback.
 - **90.9% business logic coverage** — 124 tests. Coverage measured for bloc, cubit, data, domain, utils, and DI only (excludes view layer). Includes tests for button loading cancel (TTS and manual fetch), collected colours button/sheet, scroll direction toggle, and ScrollDirectionCubit.
 - **CI** — GitHub Actions runs `flutter analyze` and `flutter test` on app, image_viewer, and share_service.
 
 IMGO is a feed-based, luxury-travel inspiration app with:
 - intro video + seamless transition into an image carousel,
-- AI-generated titles/descriptions for accessibility/storytelling,
+- AI-generated titles/descriptions for accessibility,
 - text-to-speech playback with word-highlighting,
 - favourites + share,
 - gyroscope parallax on the selected image (collapsed and expanded, iOS/Android),
