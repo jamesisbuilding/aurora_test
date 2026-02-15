@@ -78,15 +78,16 @@ class _ImageViewerState extends State<ImageViewer> with AnimatedPressMixin {
     return SafeArea(
       top: false,
       bottom: false,
-      child: AnimatedOpacity(
-        opacity: !widget.selected && widget.disabled ? 0 : 1,
-        duration: const Duration(milliseconds: 250),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
 
-          height: widget.expanded ? MediaQuery.sizeOf(context).height : 500,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 100),
+        height: widget.expanded ? MediaQuery.sizeOf(context).height : 500,
+        child: AnimatedOpacity(
+          opacity: !widget.selected && widget.disabled ? 0 : 1,
+          duration: const Duration(milliseconds: 250),
           child: SingleChildScrollView(
             controller: _scrollController,
+            physics: widget.expanded ? null : const NeverScrollableScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: _buildContent(),

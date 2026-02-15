@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_analysis_service/image_analysis_service.dart';
 import 'package:image_viewer/src/bloc/image_viewer_bloc.dart';
+import 'package:image_viewer/src/cubit/scroll_direction_cubit.dart';
 import 'package:image_viewer/src/bloc/image_viewer_state.dart';
 import 'package:image_viewer/src/view/widgets/control_bar/control_bar_main_button.dart';
 import 'package:image_viewer/src/view/widgets/control_bar/favourite_button.dart';
@@ -75,8 +76,11 @@ class _ControlBarState extends State<ControlBar>
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!_hasReceivedFirstImage) {
-      final hasImages =
-          context.read<ImageViewerBloc>().state.visibleImages.isNotEmpty;
+      final hasImages = context
+          .read<ImageViewerBloc>()
+          .state
+          .visibleImages
+          .isNotEmpty;
       if (hasImages) {
         _hasReceivedFirstImage = true;
         _controlBarExpanded = true;
@@ -136,14 +140,8 @@ class _ControlBarState extends State<ControlBar>
       _hasReceivedFirstImage = true;
       _controlBarExpanded = true;
     });
-    _snapAnimation = Tween<double>(
-      begin: _slideOffsetPx,
-      end: 0.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _snapController,
-        curve: Curves.easeOutBack,
-      ),
+    _snapAnimation = Tween<double>(begin: _slideOffsetPx, end: 0.0).animate(
+      CurvedAnimation(parent: _snapController, curve: Curves.easeOutBack),
     );
     _snapController.forward(from: 0);
     _snapController.addListener(_onSnapTick);
@@ -272,6 +270,7 @@ class _ControlBarState extends State<ControlBar>
 
   @override
   Widget build(BuildContext context) {
+    final scrollDir = context.watch<ScrollDirectionCubit>().state;
     return BlocListener<ImageViewerBloc, ImageViewerState>(
       listenWhen: (prev, curr) =>
           prev.visibleImages.isEmpty && curr.visibleImages.isNotEmpty,
@@ -287,47 +286,125 @@ class _ControlBarState extends State<ControlBar>
             ignoring: !_hasReceivedFirstImage,
             child: Stack(
               clipBehavior: Clip.none,
+              alignment: Alignment.center,
               children: [
                 Container(
-            color: Colors.transparent,
-            child: RepaintBoundary(
-              child: MeasureSize(
-                onChange: (size) {
-                  if (size != null && _contentHeight != size.height) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (mounted) {
-                        setState(() {
-                          _contentHeight = size.height;
-                          if (!_hasReceivedFirstImage) {
-                            _slideOffsetPx = _collapseDistance;
-                            _controlBarExpanded = false;
-                          } else if (!_controlBarExpanded) {
-                            _slideOffsetPx = _collapseDistance;
-                          }
-                        });
-                      }
-                    });
-                  }
-                },
-                child: Transform.translate(
-                  offset: Offset(0, _slideOffsetPx),
-                  child: _buildSheetContent(context),
+                  color: Colors.transparent,
+                  child: RepaintBoundary(
+                    child: MeasureSize(
+                      onChange: (size) {
+                        if (size != null && _contentHeight != size.height) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            if (mounted) {
+                              setState(() {
+                                _contentHeight = size.height;
+                                if (!_hasReceivedFirstImage) {
+                                  _slideOffsetPx = _collapseDistance;
+                                  _controlBarExpanded = false;
+                                } else if (!_controlBarExpanded) {
+                                  _slideOffsetPx = _collapseDistance;
+                                }
+                              });
+                            }
+                          });
+                        }
+                      },
+                      child: Transform.translate(
+                        offset: Offset(0, _slideOffsetPx),
+                        child: _buildSheetContent(context),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                if (!widget.carouselExpanded)
+                  Positioned(
+                    width: MediaQuery.sizeOf(context).width,
+                    bottom: _visibleTopFromBottom + 8,
+                    child: ControlBarLoadingIndicator(
+                      position: scrollDir == Axis.horizontal
+                          ? LoadingPosition.left
+                          : LoadingPosition.center,
+                    ),
+                  ),
+              ],
             ),
           ),
-          if(!widget.carouselExpanded)
-          Positioned(
-            bottom: _visibleTopFromBottom + 8,
-            right: 20,
-            child: BackgroundLoadingIndicator(
-              visibleWhen: (state) =>
-                  state.loadingType == ViewerLoadingType.background &&
-                  state.visibleImages.isNotEmpty,
-            ),
-          ),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+enum LoadingPosition { center, left }
+
+class ControlBarLoadingIndicator extends StatefulWidget {
+  final LoadingPosition position;
+
+  const ControlBarLoadingIndicator({
+    super.key,
+    this.position = LoadingPosition.center,
+  });
+
+  @override
+  State<ControlBarLoadingIndicator> createState() =>
+      _ControlBarLoadingIndicatorState();
+}
+
+class _ControlBarLoadingIndicatorState
+    extends State<ControlBarLoadingIndicator> {
+  late bool _visible = true;
+  late LoadingPosition _position;
+
+  @override
+  initState() {
+    super.initState();
+
+    _position = widget.position;
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.position != widget.position) {
+      _fade();
+    }
+  }
+
+  _fade() async {
+    setState(() {
+      _visible = false;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    _position = widget.position;
+
+    setState(() {
+      _visible = true;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: _visible ? 1 : 0,
+      duration: const Duration(milliseconds: 250),
+      child: SizedBox(
+        width: MediaQuery.sizeOf(context).width,
+        child: Padding(
+          padding: const .symmetric(horizontal: 24.0),
+          child: Row(
+            mainAxisAlignment: _position == LoadingPosition.left
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.center,
+            children: [
+              BackgroundLoadingIndicator(
+                visibleWhen: (state) =>
+                    state.loadingType == ViewerLoadingType.background &&
+                    state.visibleImages.isNotEmpty,
+              ),
+            ],
           ),
         ),
       ),

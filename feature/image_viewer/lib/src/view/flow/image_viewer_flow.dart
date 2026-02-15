@@ -56,11 +56,12 @@ class _ImageViewerFlowState extends State<ImageViewerFlow> {
       providers: [
         BlocProvider(
           create: (_) =>
-              getIt<ImageViewerBloc>()..add(const ImageViewerFetchRequested()),
+              getIt<ImageViewerBloc>()..add(const ImageViewerFetchRequested(count: 5)),
         ),
         BlocProvider(create: (_) => getIt<TtsCubit>()),
         BlocProvider(create: (_) => getIt<FavouritesCubit>()),
         BlocProvider(create: (_) => getIt<CollectedColorsCubit>()),
+        BlocProvider(create: (_) => getIt<ScrollDirectionCubit>()),
       ],
       child: Stack(
         fit: StackFit.expand,
@@ -77,7 +78,7 @@ class _ImageViewerFlowState extends State<ImageViewerFlow> {
           Transform.scale(
             scale: 1.15,
             child: Transform.translate(
-              offset: Offset(0, -25),
+              offset: Offset(0, -0.5),
               child: IgnorePointer(
                 ignoring: _videoComplete,
                 child: AnimatedOpacity(

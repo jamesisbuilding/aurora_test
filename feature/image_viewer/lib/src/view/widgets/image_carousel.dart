@@ -17,9 +17,13 @@ class ImageCarousel extends StatefulWidget {
     this.granularity = _defaultGranularity,
     this.controller,
     required this.onExpanded,
+    this.scrollDirection = Axis.vertical,
   });
 
   final void Function(int page) onPageChange;
+
+  /// Vertical (up/down) or horizontal (left/right) scroll.
+  final Axis scrollDirection;
 
   /// Called during scroll with ratio array. E.g. [0,0,1,1,1] = current 2/5, next 3/5.
   final void Function(List<int> ratio)? onVisibleRatioChange;
@@ -151,15 +155,17 @@ class _ImageCarouselState extends State<ImageCarousel> {
   Widget build(BuildContext context) {
     final itemWidth = MediaQuery.sizeOf(context).width * _viewportFraction;
     return AnimatedContainer(
+      
       duration: const Duration(seconds: 1),
       color: _backgroundColor(context),
       height: MediaQuery.sizeOf(context).height,
       child: PageView.builder(
+        
         physics: _expandedID.isNotEmpty
             ? const NeverScrollableScrollPhysics()
             : null,
         controller: _pageController,
-
+        scrollDirection: widget.scrollDirection,
         padEnds: true,
         itemCount: widget.images.length,
         onPageChanged: (index) {

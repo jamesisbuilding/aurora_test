@@ -155,7 +155,7 @@ extension ImageBlocHandlers on ImageViewerBloc {
       if (state.fetchedImages.length == 1) {
         add(
           const ImageViewerFetchRequested(
-            count: 3,
+            count: 5,
             loadingType: ViewerLoadingType.background,
           ),
         );
@@ -177,7 +177,7 @@ extension ImageBlocHandlers on ImageViewerBloc {
       if (state.loadingType == ViewerLoadingType.none) {
         add(
           const ImageViewerFetchRequested(
-            count: 3,
+            count: 5,
             loadingType: ViewerLoadingType.manual,
           ),
         );

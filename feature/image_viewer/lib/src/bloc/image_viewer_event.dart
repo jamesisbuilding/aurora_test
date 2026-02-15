@@ -9,7 +9,7 @@ sealed class ImageViewerEvent {
 final class ImageViewerFetchRequested extends ImageViewerEvent {
   final int count; 
   final ViewerLoadingType loadingType; 
-  const ImageViewerFetchRequested({this.count = 3, this.loadingType = ViewerLoadingType.background});
+  const ImageViewerFetchRequested({this.count = 5, this.loadingType = ViewerLoadingType.background});
 }
 
 final class UpdateSelectedImage extends ImageViewerEvent {

@@ -68,5 +68,13 @@ void main() {
       expect(cubit, isNotNull);
       cubit.close();
     });
+
+    test('registers and resolves ScrollDirectionCubit', () {
+      registerImageViewerModule(getIt);
+
+      final cubit = getIt<ScrollDirectionCubit>();
+      expect(cubit, isNotNull);
+      cubit.close();
+    });
   });
 }

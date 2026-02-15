@@ -357,7 +357,7 @@ void main() {
 
       await Future<void>.delayed(const Duration(milliseconds: 300));
       verify(() => mockRepository.runImageRetrieval(
-            count: 3,
+            count: 5,
             existingImages: any(named: 'existingImages'),
           )).called(1);
       bloc.close();
@@ -414,7 +414,7 @@ void main() {
       expect(states.last.visibleImages.length, 2);
 
       verify(() => mockRepository.runImageRetrieval(
-            count: 3,
+            count: 5,
             existingImages: any(named: 'existingImages'),
           )).called(1);
       bloc.close();
@@ -469,7 +469,7 @@ void main() {
       );
 
       verify(() => mockRepository.runImageRetrieval(
-            count: 3,
+            count: 5,
             existingImages: any(named: 'existingImages'),
           )).called(1);
       expect(states.last.loadingType, ViewerLoadingType.none);

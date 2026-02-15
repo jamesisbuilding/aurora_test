@@ -43,7 +43,6 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
   final GlobalKey _screenshotKey = GlobalKey();
   ImageViewerBloc? _bloc;
 
-  static const _viewportFraction = 0.8;
 
   void nextPage() {
     widget.onNextPage();
@@ -102,7 +101,7 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
         .indexWhere((i) => i.uid == selected.uid)
         .clamp(0, images.length - 1);
     _pageController = PageController(
-      viewportFraction: _viewportFraction,
+      viewportFraction: 1,
       initialPage: initialPage,
     );
     _bloc!.add(
@@ -137,9 +136,10 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
     final images = widget.images;
     final selectedImage = widget.selectedImage;
 
-    return Stack(
-      alignment: Alignment.center,
-      children: [
+    return BlocBuilder<ScrollDirectionCubit, Axis>(
+      builder: (context, scrollDirection) => Stack(
+        alignment: Alignment.center,
+        children: [
         RepaintBoundary(
           key: _screenshotKey,
           child: Stack(
@@ -149,7 +149,7 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
                   images != null &&
                   selectedImage != null) ...[
                 if (widget.isLoaded)
-                  _BlendedColorsSync(
+                  BlendedColorsSync(
                     selectedImage: selectedImage,
                     onSync: (colors) =>
                         widget.blendedColorsNotifier.value = colors,
@@ -169,6 +169,7 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
                   controller: _pageController,
                   images: images,
                   selectedID: selectedImage.uid,
+                  scrollDirection: scrollDirection,
                   onVisibleRatioChange: (ratio) =>
                       widget.onVisibleRatioChange(images, ratio),
                   onPageChange: (page) => widget.onPageChange(images, page),
@@ -205,60 +206,27 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
           },
         ),
 
-        Positioned(
-          top: MediaQuery.paddingOf(context).top + 8,
-          right: 16,
-          child: ThemeSwitch(onThemeToggle: widget.onThemeToggle),
-        ),
-        Positioned(
-          top: MediaQuery.paddingOf(context).top + 8,
-          left: 16,
-          child: const CollectedColorsButton(),
-        ),
+        if (!widget.expandedView) ...[
+          Positioned(
+            top: MediaQuery.paddingOf(context).top + 8,
+            right: 16,
+            child: ThemeSwitch(onThemeToggle: widget.onThemeToggle),
+          ),
+          Positioned(
+            top: MediaQuery.paddingOf(context).top + 8,
+            left: 16,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ScrollDirectionToggle(),
+                const SizedBox(width: 4),
+                const CollectedColorsButton(),
+              ],
+            ),
+          ),
+        ],
       ],
+    ),
     );
   }
-}
-
-/// Syncs blended colors when bloc state changes (e.g. fetch, initial load).
-class _BlendedColorsSync extends StatefulWidget {
-  const _BlendedColorsSync({required this.selectedImage, required this.onSync});
-
-  final ImageModel selectedImage;
-  final void Function(List<Color>) onSync;
-
-  @override
-  State<_BlendedColorsSync> createState() => _BlendedColorsSyncState();
-}
-
-class _BlendedColorsSyncState extends State<_BlendedColorsSync> {
-  String? _lastSyncedUid;
-
-  @override
-  void initState() {
-    super.initState();
-    _syncIfNeeded();
-  }
-
-  @override
-  void didUpdateWidget(covariant _BlendedColorsSync oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _syncIfNeeded();
-  }
-
-  void _syncIfNeeded() {
-    if (_lastSyncedUid == widget.selectedImage.uid) return;
-    _lastSyncedUid = widget.selectedImage.uid;
-    final palette = widget.selectedImage.colorPalette;
-    widget.onSync(
-      ensureMinColors(
-        palette.isNotEmpty
-            ? List.of(palette)
-            : List.of(imageViewerFallbackPalette),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) => const SizedBox.shrink();
 }

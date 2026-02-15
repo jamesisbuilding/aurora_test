@@ -71,7 +71,7 @@ void main() {
     test('initial fetch → swipe near-end prefetch → Another (queue exists vs empty) '
         '→ no duplicate signatures', () async {
       bloc.add(const ImageViewerFetchRequested(
-        count: 3,
+        count: 5,
         loadingType: ViewerLoadingType.background,
       ));
 
@@ -81,7 +81,7 @@ void main() {
       );
 
       expect(bloc.state.visibleImages.length, 1);
-      expect(bloc.state.fetchedImages.length, 2);
+      expect(bloc.state.fetchedImages.length, 4);
       assertNoDuplicateSignatures(bloc.state);
 
       final initialSigs = {
@@ -90,7 +90,7 @@ void main() {
       };
 
       bloc.add(const ImageViewerFetchRequested(
-        count: 3,
+        count: 5,
         loadingType: ViewerLoadingType.background,
       ));
 
@@ -101,7 +101,7 @@ void main() {
 
       expect(
         bloc.state.visibleImages.length + bloc.state.fetchedImages.length,
-        greaterThanOrEqualTo(6),
+        greaterThanOrEqualTo(10),
       );
       assertNoDuplicateSignatures(bloc.state);
       for (final sig in initialSigs) {
@@ -182,6 +182,10 @@ void main() {
           Success(img('u4', 's4')),
           Success(img('u5', 's5')),
           Success(img('u6', 's6')),
+          Success(img('u7', 's7')),
+          Success(img('u8', 's8')),
+          Success(img('u9', 's9')),
+          Success(img('u10', 's10')),
         ],
       );
       fakeDatasource.reset(
@@ -192,11 +196,15 @@ void main() {
           'https://a.com/4',
           'https://a.com/5',
           'https://a.com/6',
+          'https://a.com/7',
+          'https://a.com/8',
+          'https://a.com/9',
+          'https://a.com/10',
         ],
       );
 
       bloc.add(const ImageViewerFetchRequested(
-        count: 3,
+        count: 5,
         loadingType: ViewerLoadingType.background,
       ));
 
@@ -205,7 +213,7 @@ void main() {
       assertNoDuplicateSignatures(bloc.state);
 
       bloc.add(const ImageViewerFetchRequested(
-        count: 3,
+        count: 5,
         loadingType: ViewerLoadingType.background,
       ));
 

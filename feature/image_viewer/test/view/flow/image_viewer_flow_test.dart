@@ -24,13 +24,21 @@ void main() {
   setUp(() {
     testGetIt = GetIt.asNewInstance();
     fakeDatasource = FakeImageRemoteDatasource(
-      urlsToReturn: ['https://test.com/1', 'https://test.com/2', 'https://test.com/3'],
+      urlsToReturn: [
+        'https://test.com/1',
+        'https://test.com/2',
+        'https://test.com/3',
+        'https://test.com/4',
+        'https://test.com/5',
+      ],
     );
     fakeAnalysisService = FakeImageAnalysisService(
       resultsToReturn: [
         Success(testImage('uid1', 'sig1')),
         Success(testImage('uid2', 'sig2')),
         Success(testImage('uid3', 'sig3')),
+        Success(testImage('uid4', 'sig4')),
+        Success(testImage('uid5', 'sig5')),
       ],
     );
     fakeTtsService = FakeTtsService();
@@ -52,6 +60,7 @@ void main() {
     );
     testGetIt.registerFactory<FavouritesCubit>(() => FavouritesCubit());
     testGetIt.registerFactory<CollectedColorsCubit>(() => CollectedColorsCubit());
+    testGetIt.registerFactory<ScrollDirectionCubit>(() => ScrollDirectionCubit());
   });
 
   tearDown(() async {

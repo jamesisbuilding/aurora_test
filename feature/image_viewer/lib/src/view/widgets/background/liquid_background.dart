@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -84,11 +85,15 @@ List<Color> _lerpColors(List<Color> from, List<Color> to, double t) {
   });
 }
 
+/// Throttle shader time updates to reduce GPU/CPU load (~20 fps instead of 60+).
+const _shaderTimeUpdateInterval = Duration(milliseconds: 50);
+
 class _LiquidBackgroundState extends State<LiquidBackground>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   FragmentShader? _shader;
   bool _shaderLoadFailed = false;
-  late AnimationController _timeController;
+  final ValueNotifier<double> _shaderTimeNotifier = ValueNotifier<double>(0);
+  Timer? _timeTimer;
   late AnimationController _colorTransitionController;
   List<Color> _displayedColors = const [];
   List<Color> _transitionFromColors = const [];
@@ -98,17 +103,47 @@ class _LiquidBackgroundState extends State<LiquidBackground>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadShader();
-    _timeController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 30),
-    )..repeat();
+    _startTimeUpdates();
     _colorTransitionController = AnimationController(
       vsync: this,
       duration: _colorTransitionDuration,
     );
     _colorTransitionController.addListener(_onColorTransitionTick);
     _subscribeToListenable();
+  }
+
+  void _startTimeUpdates() {
+    _timeTimer?.cancel();
+    const timePerSecond = 10 / 30;
+    final increment =
+        timePerSecond * _shaderTimeUpdateInterval.inMilliseconds / 1000;
+    _timeTimer = Timer.periodic(_shaderTimeUpdateInterval, (_) {
+      if (!mounted) return;
+      final next = (_shaderTimeNotifier.value + increment) % 10.0;
+      _shaderTimeNotifier.value = next;
+    });
+  }
+
+  void _stopTimeUpdates() {
+    _timeTimer?.cancel();
+    _timeTimer = null;
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        _startTimeUpdates();
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+        _stopTimeUpdates();
+        break;
+    }
   }
 
   void _subscribeToListenable() {
@@ -166,9 +201,11 @@ class _LiquidBackgroundState extends State<LiquidBackground>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _listenerRemove?.call();
+    _stopTimeUpdates();
+    _shaderTimeNotifier.dispose();
     _colorTransitionController.removeListener(_onColorTransitionTick);
-    _timeController.dispose();
     _colorTransitionController.dispose();
     super.dispose();
   }
@@ -198,7 +235,10 @@ class _LiquidBackgroundState extends State<LiquidBackground>
 
   Widget _buildPainter(List<Color> colors) {
     return AnimatedBuilder(
-      animation: Listenable.merge([_timeController, _colorTransitionController]),
+      animation: Listenable.merge([
+        _shaderTimeNotifier,
+        _colorTransitionController,
+      ]),
       builder: (context, _) {
         final displayColors = widget.colorsListenable != null
             ? _displayedColors
@@ -207,7 +247,7 @@ class _LiquidBackgroundState extends State<LiquidBackground>
           size: Size.infinite,
           painter: LiquidBackgroundPainter(
             shader: _shader!,
-            time: _timeController.value * 10,
+            time: _shaderTimeNotifier.value,
             colors: displayColors,
           ),
         );

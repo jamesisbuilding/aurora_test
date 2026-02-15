@@ -18,6 +18,7 @@ void main() {
   late FakeTtsService fakeTtsService;
   late MockImageRepository mockRepo;
   late FavouritesCubit favouritesCubit;
+  ScrollDirectionCubit? scrollDirectionCubit;
 
   setUp(() {
     mockRepo = MockImageRepository();
@@ -29,12 +30,14 @@ void main() {
     fakeTtsService = FakeTtsService();
     ttsCubit = TtsCubit(ttsService: fakeTtsService);
     favouritesCubit = FavouritesCubit();
+    scrollDirectionCubit = ScrollDirectionCubit();
   });
 
   tearDown(() {
     imageViewerBloc.close();
     ttsCubit.close();
     favouritesCubit.close();
+    scrollDirectionCubit?.close();
     fakeTtsService.dispose();
   });
 
@@ -49,6 +52,8 @@ void main() {
             BlocProvider<ImageViewerBloc>.value(value: imageViewerBloc),
             BlocProvider<TtsCubit>.value(value: ttsCubit),
             BlocProvider<FavouritesCubit>.value(value: favouritesCubit),
+            BlocProvider<ScrollDirectionCubit>.value(
+                value: scrollDirectionCubit!),
           ],
           child: Stack(
             fit: StackFit.expand,

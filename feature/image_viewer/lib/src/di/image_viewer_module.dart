@@ -31,4 +31,5 @@ void registerImageViewerModule(GetIt getIt) {
 
   getIt.registerFactory<FavouritesCubit>(() => FavouritesCubit());
   getIt.registerFactory<CollectedColorsCubit>(() => CollectedColorsCubit());
+  getIt.registerFactory<ScrollDirectionCubit>(() => ScrollDirectionCubit());
 }

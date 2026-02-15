@@ -7,7 +7,7 @@ Flutter coding-assessment project for Aurora.
 - **Shader-driven color interpolation** — GPU-accelerated linear interpolation of palettes across the carousel; background transitions driven by visible-image ratios.
 - **AI-augmented data** — LLM-powered titles and descriptions (ChatGPT/Gemini) for each image; accessibility-first storytelling.
 - **TTS with word highlighting** — ElevenLabs-backed text-to-speech; synchronized word highlighting for immersive playback.
-- **82.1% test coverage** — 120+ tests across share service, bloc, repository, datasource, cubits, DI, widget, integration, and golden suites. Includes tests for button loading cancel (TTS and manual fetch), collected colours button/sheet.
+- **90.9% business logic coverage** — 124 tests. Coverage measured for bloc, cubit, data, domain, utils, and DI only (excludes view layer). Includes tests for button loading cancel (TTS and manual fetch), collected colours button/sheet, scroll direction toggle, and ScrollDirectionCubit.
 - **CI** — GitHub Actions runs `flutter analyze` and `flutter test` on app, image_viewer, and share_service.
 
 IMGO is a feed-based, luxury-travel inspiration app with:
@@ -69,7 +69,7 @@ This is architecturally sound for a small-to-mid Flutter product because depende
    - duplicate protection combines URL-level and pixel-signature checks
    - retries + exponential backoff for transient failures
 6. User interactions:
-   - swipe carousel, expand/collapse cards, trigger “Another” fetch
+   - swipe carousel (vertical or horizontal — user-toggleable), expand/collapse cards, trigger “Another” fetch
    - start/stop TTS with text highlighting
    - favourite or share image + text
    - toggle light/dark mode
@@ -114,7 +114,7 @@ The app is best optimized for iPhone 17 Pro. Although it should run on other dev
 ### Launch
 1. Native splash screen (platform launch screen - better with sound (no sound in emulator recording))
 2. Launcher video 
-3. Streaming in initial batch of images – preloads whilst the video plays
+3. Streaming in initial batch of images (5) – preloads whilst the video plays
 
 ### Fetching and Processing Images
 4. Background fetch – awaiting more images in the background as the user scrolls, triggered by their position in the carousel
@@ -139,7 +139,7 @@ The app is best optimized for iPhone 17 Pro. Although it should run on other dev
     - **Audio mode:** when the carousel is expanded, the button switches to play/pause for TTS (replacing the "Another" label).
     - Contrast ratio threshold (WCAG AAA). Minimum 7:1 for accessibility.
 18. Light and Dark mode – toggle via the button at the top right
-19. Control bar – collapsible and updates to changes in selected image colors. Background loading indicator sits 8px above the right edge of the control bar and moves with expand/collapse. Hidden/collapsed until the first image arrives, then reveals and pops up to expanded.
+19. Control bar – collapsible and updates to changes in selected image colors. Background loading indicator sits 8px above the control bar and moves with expand/collapse. **Scroll direction toggle:** top-left icon switches carousel between horizontal (default) and vertical scroll; indicator is centered when vertical, right-aligned when horizontal; fades in/out on position change. Hidden/collapsed until the first image arrives, then reveals and pops up to expanded.
 20. Error dialogs – glassmorphic, theme-inverted popups (dark in light mode, light in dark mode) surface fetch failures and duplicate exhaustion; retry on dismiss when no images visible
 
 ### Accessibility
@@ -195,7 +195,7 @@ Eleven Labs (TTS) and LLM (ChatGPT/Gemini) could be made more robust – retries
 - **UX polish** — Main button label "Another" capitalised
 
 ### Recommended next hardening steps
-1. **Tests (82.1% coverage):** Unit tests for bloc, repository, datasource, cubits, and DI; widget tests for control bar, expanded card, custom dialog; integration tests for fetch flow and video → viewer transition; golden tests for UI regression. See [Testing](#testing).
+1. **Tests (90.9% business logic coverage):** Unit tests for bloc, repository, datasource, cubits, and DI; widget tests for control bar, expanded card, custom dialog; integration tests for fetch flow and video → viewer transition; golden tests for UI regression. See [Testing](#testing).
 2. ~~Environment-driven pipeline selection~~ — Done: use `-d IMAGE_ANALYSIS_PIPELINE=gemini`.
 3. Add structured logging/telemetry and production log-level controls.
 4. ~~Explicit repository error model~~ — Done: `ImageFetchFailedException`, `NoMoreImagesException`.
@@ -228,20 +228,28 @@ For production deployment, consider adding:
 
 | Component | Behaviour | Notes |
 |-----------|-----------|-------|
-| **Carousel** | `PageView` with `viewportFraction: 0.8` | Single `PageController`; images loaded on demand via `CachedNetworkImage`; `AnimatedSwitcher` for transitions. |
+| **Carousel** | Vertical or horizontal `PageView` with `viewportFraction: 0.8` | User can toggle scroll direction (top-left icon); default horizontal; single `PageController`; images loaded on demand via `CachedNetworkImage`; `AnimatedSwitcher` for transitions. |
 | **Background shader** | `LiquidBackground` uses `FragmentShader` (`gradient.frag`) | GPU-rendered; `blendedColorsNotifier` updates drive repaints; 5-slot color interpolation is O(1) per frame. |
 | **Prefetch** | Triggered at `page == images.length - 2` | Avoids over-fetch; queue capped by bloc; deduplication reduces redundant processing. |
 | **TTS** | Streamed from ElevenLabs | Audio loads async; `TtsCubit` manages playback state; no blocking on main isolate. |
-| **Image analysis** | Per-image LLM call with 10s timeout | Batch of 3; sequential processing in repository; consider parallelisation for larger batches. |
+| **Image analysis** | Per-image LLM call with 10s timeout | Batch of 5; sequential processing in repository; consider parallelisation for larger batches. |
 | **Memory** | `CachedNetworkImage` + local file fallback | Images evicted by cache; carousel disposes off-screen pages; `RepaintBoundary` on screenshot capture. |
 
 **Profiling:** Run with `flutter run --profile` and use DevTools (Performance, Memory) to verify frame times and heap usage on target devices.
+
+### Carousel scroll direction (vertical vs horizontal)
+
+The carousel supports both vertical and horizontal scrolling, with a user-toggle (top-left icon). Research does not favour one direction universally; the choice depends on task and context. We default to vertical and allow switching.
+
+**Vertical scroll (default):** Vertical scrolling aligns with common mobile behaviour (feeds, social streams) and tends to be easier for users because of familiarity and muscle memory. Platform guidelines often discourage horizontal scroll because it can add friction. — [1] [ScienceDirect](https://www.sciencedirect.com/topics/computer-science/horizontal-scrolling) (vertical as usual default); [2] [UGent](https://libstore.ugent.be/fulltxt/RUG01/002/837/790/RUG01-002837790_2020_0001_AC.pdf) (muscle memory for vertical scroll; violating that can increase cognitive load).
+
+**Horizontal scroll:** Horizontal swipe can be better suited to discrete, paged content (e.g. product carousels) and has been linked to higher cognitive absorption and playfulness in some flows. — [3] [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC9948611/) (horizontal swipe may be better for segmented information processing); [4] [ResearchGate](https://www.researchgate.net/publication/304344009_Swiping_vs_Scrolling_in_Mobile_Shopping_Applications) (horizontal swipe interfaces can increase cognitive absorption in mobile shopping).
 
 ---
 
 ## Testing
 
-**Test coverage summary** — **120 tests** (116 image_viewer + 4 share_service), **82.1% line coverage** (`feature/image_viewer`)
+**Test coverage summary** — **124 tests** (119 image_viewer + 4 share_service + 1 app), **59.5% line coverage** (`feature/image_viewer`)
 
 | Suite | Tests | Path |
 |-------|-------|------|
@@ -252,6 +260,7 @@ For production deployment, consider adding:
 | ImageRemoteDatasource | 4 | `test/data/datasources/image_remote_datasource_test.dart` |
 | ImageViewerExceptions | 3 | `test/domain/exceptions/image_viewer_exceptions_test.dart` |
 | CollectedColorsCubit | 5 | `test/cubit/collected_colors_cubit_test.dart` |
+| ScrollDirectionCubit | 4 | `test/cubit/scroll_direction_cubit_test.dart` |
 | TtsCubit | 4 | `test/cubit/tts_cubit_test.dart` |
 | ImageProviderUtils | 7 | `test/utils/image_provider_utils_test.dart` |
 | ImageViewerModule (DI) | 6 | `test/di/image_viewer_module_test.dart` |
@@ -263,10 +272,13 @@ For production deployment, consider adding:
 | FavouriteStarButton | 3 | `test/view/widgets/control_bar/favourite_star_button_test.dart` |
 | CollectedColorsButton | 4 | `test/view/widgets/collected_colors/collected_colors_button_test.dart` |
 | CollectedColorsSheet | 5 | `test/view/widgets/collected_colors/collected_colors_sheet_test.dart` |
+| ScrollDirectionToggle | 3 | `test/view/widgets/carousel/scroll_direction_toggle_test.dart` |
 | CustomDialog | 1 | `test/view/widgets/alerts/custom_dialog_test.dart` |
 | ErrorRetryFlow | 1 | `test/view/pages/error_retry_flow_test.dart` |
 | GyroParallaxCard | 5 | `test/view/widgets/gyro/gyro_parallax_card_test.dart` |
 | Golden (UI regression) | 10 | `test/golden/golden_test.dart` |
+
+**Business logic coverage (90.9%):** Measured for `lib/src/{bloc,cubit,data,domain,utils,di}/` only. Excludes view layer (widgets, pages, flow) and generated files. Run `sh scripts/coverage_business_logic.sh` after `flutter test --coverage`.
 
 **Golden tests (10):** `test/golden/golden_test.dart` — control bar collapsed/expanded/light/dark, loading indicator, intro thumbnail, expanded card (long text), error dialog, carousel collapsed, animated background. Run with `--update-goldens` to create/update. Golden PNGs are gitignored; CI skips golden tests. Run locally after UI changes. See `docs/GOLDEN_TESTS_PLAN.md` for full plan.
 
@@ -341,13 +353,48 @@ flutter test test/bloc/image_viewer_bloc_test.dart
 
 | Trigger | Location | Type | When |
 |---------|----------|------|------|
-| Initial load | `ImageViewerFlow` | Background (count 3) | On flow mount |
-| Scroll prefetch near end | `_onPageChange` (image_viewer_main_view) | Background (count 3) | When `page == images.length - 2` and `loadingType == none` |
-| Another (has prefetched) | `AnotherImageEvent` via `onNextPage` | Background (count 3) | When consuming last prefetched (length was 1) |
-| Another (no prefetched) | `AnotherImageEvent` | Manual (count 3) | When `loadingType == none` |
+| Initial load | `ImageViewerFlow` | Background (count 10) | On flow mount |
+| Scroll prefetch near end | `_onPageChange` (image_viewer_main_view) | Background (count 10) | When vertical scroll reaches `page == images.length - 2` and `loadingType == none` |
+| Another (has prefetched) | `AnotherImageEvent` via `onNextPage` | Background (count 10) | When consuming last prefetched (length was 1) |
+| Another (no prefetched) | `AnotherImageEvent` | Manual (count 10) | When `loadingType == none` |
 | Another (no prefetched, already loading) | `AnotherImageEvent` | Switch to manual | When `loadingType == background` – no new request |
 
 Uses `mocktail` to mock `ImageRepository`; no `bloc_test` (dependency conflicts with `flutter_bloc 9`).
+
+### ScrollDirectionCubit unit tests
+
+Carousel scroll direction state (vertical/horizontal) and toggle behavior:
+
+```bash
+cd feature/image_viewer
+flutter test test/cubit/scroll_direction_cubit_test.dart
+```
+
+**Coverage (4 tests)**
+
+| Test | Covers |
+|------|--------|
+| initial state is horizontal | Default Axis.horizontal |
+| toggle from horizontal emits vertical | State transition on first toggle |
+| toggle from vertical emits horizontal | State transition back |
+| toggle alternates correctly multiple times | Multiple toggles alternate state |
+
+### ScrollDirectionToggle widget tests
+
+Top-left scroll direction toggle button that reads and updates ScrollDirectionCubit:
+
+```bash
+cd feature/image_viewer
+flutter test test/view/widgets/carousel/scroll_direction_toggle_test.dart
+```
+
+**Coverage (3 tests)**
+
+| Test | Covers |
+|------|--------|
+| shows tooltip for horizontal when in horizontal mode | Tooltip text when horizontal |
+| tap toggles to vertical and updates tooltip | Tap calls cubit.toggle(), tooltip updates |
+| double tap returns to horizontal | Toggle cycles back |
 
 ### Fetch flow integration tests
 
@@ -627,8 +674,10 @@ cd core/services/share_service && flutter test
 # image_viewer only (116 tests, main feature)
 cd feature/image_viewer && flutter test
 
-# With coverage (82.1% line coverage in image_viewer)
+# With coverage
 cd feature/image_viewer && flutter test --coverage
+# Business logic only (bloc, cubit, data, domain, utils, di)
+cd feature/image_viewer && flutter test --coverage && sh scripts/coverage_business_logic.sh
 
 # Golden tests — update snapshots after UI changes
 cd feature/image_viewer && flutter test test/golden/golden_test.dart --update-goldens

@@ -24,8 +24,7 @@ class PaletteInteraction extends StatefulWidget {
 }
 
 class _PaletteInteractionState extends State<PaletteInteraction>
-    with TickerProviderStateMixin {
-  // Updated to TickerProvider for the 2nd controller
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   bool isExpanded = false;
   bool isExiting = false;
   late AnimationController _rotationController;
@@ -34,6 +33,7 @@ class _PaletteInteractionState extends State<PaletteInteraction>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _rotationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 10),
@@ -43,12 +43,28 @@ class _PaletteInteractionState extends State<PaletteInteraction>
       vsync: this,
       duration: const Duration(
         milliseconds: 1500,
-      ), // Speed of the machine-gun exit
+      ),
     );
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (!_rotationController.isAnimating) _rotationController.repeat();
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+        _rotationController.stop();
+        break;
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _rotationController.dispose();
     _exitController.dispose();
     super.dispose();

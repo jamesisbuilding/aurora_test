@@ -11,8 +11,27 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsFontsGen {
+  const $AssetsFontsGen();
+
+  /// File path: assets/fonts/Raleway-Regular.ttf
+  String get ralewayRegular =>
+      'packages/design_system/assets/fonts/Raleway-Regular.ttf';
+
+  /// File path: assets/fonts/YesevaOne-Regular.ttf
+  String get yesevaOneRegular =>
+      'packages/design_system/assets/fonts/YesevaOne-Regular.ttf';
+
+  /// List of all assets
+  List<String> get values => [ralewayRegular, yesevaOneRegular];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
+
+  /// File path: assets/icons/arrow-down-up.png
+  AssetGenImage get arrowDownUp =>
+      const AssetGenImage('assets/icons/arrow-down-up.png');
 
   /// File path: assets/icons/moon.png
   AssetGenImage get moon => const AssetGenImage('assets/icons/moon.png');
@@ -30,7 +49,7 @@ class $AssetsIconsGen {
   AssetGenImage get trash => const AssetGenImage('assets/icons/trash.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [moon, send, star, sun, trash];
+  List<AssetGenImage> get values => [arrowDownUp, moon, send, star, sun, trash];
 }
 
 class $AssetsVideoGen {
@@ -52,6 +71,7 @@ class Assets {
 
   static const String package = 'design_system';
 
+  static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsVideoGen video = $AssetsVideoGen();
 }
