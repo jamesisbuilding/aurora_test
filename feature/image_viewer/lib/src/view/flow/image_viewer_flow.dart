@@ -76,9 +76,9 @@ class _ImageViewerFlowState extends State<ImageViewerFlow> {
                 ),
           ),
           Transform.scale(
-            scale: 1.15,
+            scale: 1.12,
             child: Transform.translate(
-              offset: Offset(0, -0.5),
+              offset: Offset(0, -20),
               child: IgnorePointer(
                 ignoring: _videoComplete,
                 child: AnimatedOpacity(

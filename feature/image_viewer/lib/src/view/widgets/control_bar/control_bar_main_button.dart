@@ -81,7 +81,8 @@ class _ControlBarMainButtonState extends State<ControlBarMainButton> {
                 prev.isLoading != curr.isLoading ||
                 prev.isPlaying != curr.isPlaying,
             builder: (context, ttsState) {
-              final isLoading = (state.loadingType == ViewerLoadingType.manual &&
+              final isLoading =
+                  (state.loadingType == ViewerLoadingType.manual &&
                       !widget.carouselExpanded) ||
                   ttsState.isLoading;
               return MainButton(
@@ -90,12 +91,19 @@ class _ControlBarMainButtonState extends State<ControlBarMainButton> {
                 foregroundColor: fgColor,
                 backgroundImageUrl: backgroundImageUrl,
                 onTap: () => widget.onAnotherTap(),
+                shimmer:
+                    !widget.carouselExpanded &&
+                    state.fetchedImages.isNotEmpty &&
+                    !isLoading,
                 onLoadingTap: isLoading
                     ? () {
                         if (ttsState.isLoading) {
                           context.read<TtsCubit>().stop();
-                        } else if (state.loadingType == ViewerLoadingType.manual) {
-                          context.read<ImageViewerBloc>().add(const FetchCancelled());
+                        } else if (state.loadingType ==
+                            ViewerLoadingType.manual) {
+                          context.read<ImageViewerBloc>().add(
+                            const FetchCancelled(),
+                          );
                         }
                       }
                     : null,

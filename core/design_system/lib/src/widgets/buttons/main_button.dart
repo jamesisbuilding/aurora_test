@@ -1,6 +1,7 @@
 import 'package:delayed_display/delayed_display.dart';
 import 'package:design_system/design_system.dart';
 import 'package:flutter/material.dart';
+import 'package:shimmer_animation/shimmer_animation.dart';
 
 enum MainButtonMode {
   another(height: 50, width: 160),
@@ -30,6 +31,7 @@ class MainButton extends StatefulWidget {
   final bool? isPlaying;
 
   final bool? isLoading;
+  final bool shimmer;
 
   /// Network URL for background image. Rendered via [CachedImage] when non-empty.
   final String? backgroundImageUrl;
@@ -47,6 +49,7 @@ class MainButton extends StatefulWidget {
     this.isPlaying,
     this.isLoading,
     this.backgroundImageUrl,
+    this.shimmer = false,
   });
 
   @override
@@ -175,6 +178,9 @@ class _MainButtonState extends State<MainButton> with AnimatedPressMixin {
                         key: ValueKey('audio_${_displayPlaying}'),
                       ),
               ),
+              Shimmer(
+                enabled: widget.shimmer,
+                child: const SizedBox()),
             ],
           ),
         ),

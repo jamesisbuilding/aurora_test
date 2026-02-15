@@ -134,6 +134,7 @@ The app is best optimized for iPhone 17 Pro. Although it should run on other dev
 16. Favourite and Share – users can favourite and share images. Share has two modes: collapsed shares the raw image and description; expanded mode captures a screenshot of the carousel (excluding the control bar)
 17. **Control bar main button** – dynamic button with multiple states:
     - **Background image:** shows the next image (from prefetched queue) if available; if none are fetched, shows the current/selected image; when carousel is expanded, shows the current image as a faint background. Colours driven by the image palette.
+    - **Shimmer:** the button shimmers when there are new (prefetched) images to see and the carousel is collapsed; indicates that tapping "Another" will reveal the next image.
     - **Loading state:** shows a spinner when manually fetching ("Another" tapped with no prefetched images) or when loading audio.
     - **Button cancel during loading:** tapping the main button while it is loading cancels the in-flight operation—TTS playback stops if audio is loading, or the manual image fetch is cancelled via `FetchCancelled` if "Another" was tapped with an empty queue. Prevents accidental re-taps and gives users control to abort slow operations.
     - **Audio mode:** when the carousel is expanded, the button switches to play/pause for TTS (replacing the "Another" label).

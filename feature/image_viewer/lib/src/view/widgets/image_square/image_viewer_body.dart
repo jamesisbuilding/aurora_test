@@ -1,6 +1,5 @@
 import 'package:delayed_display/delayed_display.dart';
 import 'package:design_system/design_system.dart';
-import 'package:design_system/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_analysis_service/image_analysis_service.dart';
