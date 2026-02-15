@@ -32,7 +32,7 @@ on a real device.
 ## Demo
 - Video demos: https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing  
   **1. Quick demo** — Emulator; no sound and no gyro demo, but best performance for prefetching and caching.  
-  **2. Imgo - Improved UX** — Full demo with tap prompts (touch hint) and axis switching (scroll direction toggle); recorded on device (network was slow during that recording).
+  **2. Polished On Device Demo** — Full product demo with gyro, tts and intro video.
 
 ---
 

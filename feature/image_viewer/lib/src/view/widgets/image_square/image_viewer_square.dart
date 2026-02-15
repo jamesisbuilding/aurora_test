@@ -49,7 +49,13 @@ class ImageViewerSquare extends StatelessWidget {
       fit: StackFit.expand,
       alignment: Alignment.center,
       children: [
-         
+        if (networkPath.isNotEmpty && isNetworkURL(networkPath))
+          CachedImage(
+            url: networkPath,
+            fit: BoxFit.cover,
+            borderRadius: BorderRadius.circular(12),
+          ),
+
         if (localPath.isNotEmpty)
           Opacity(
             opacity: 0.5,
@@ -69,14 +75,6 @@ class ImageViewerSquare extends StatelessWidget {
               ),
             ),
           ),
-
-        if (networkPath.isNotEmpty && isNetworkURL(networkPath))
-          CachedImage(
-            url: networkPath,
-            fit: BoxFit.cover,
-            borderRadius: BorderRadius.circular(12),
-          ),
-      
       ],
     );
   }
