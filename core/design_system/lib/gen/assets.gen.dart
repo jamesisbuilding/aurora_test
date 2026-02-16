@@ -43,6 +43,17 @@ class $AssetsGifsGen {
   List<AssetGenImage> get values => [arrowDown, swipe, touch];
 }
 
+class $AssetsGraphicsGen {
+  const $AssetsGraphicsGen();
+
+  /// File path: assets/graphics/cloud-white.png
+  AssetGenImage get cloudWhite =>
+      const AssetGenImage('assets/graphics/cloud-white.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [cloudWhite];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -90,6 +101,7 @@ class Assets {
 
   static const $AssetsFontsGen fonts = $AssetsFontsGen();
   static const $AssetsGifsGen gifs = $AssetsGifsGen();
+  static const $AssetsGraphicsGen graphics = $AssetsGraphicsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsVideoGen video = $AssetsVideoGen();
 }

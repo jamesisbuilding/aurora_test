@@ -50,7 +50,7 @@ class ImageViewerBodyContent {
       return [buildSingleParagraphSpans(context, text, false, image, currentWord)];
     }
     final theme = Theme.of(context);
-    final baseStyle = imageBodyTextStyle(context);
+    final baseStyle = imageBodyTextStyle(context, Theme.of(context).colorScheme.onSurface);
     final highlightBg = theme.colorScheme.onSurface;
     final highlightFg = theme.colorScheme.surface;
     final highlightStyle = baseStyle.copyWith(
@@ -145,7 +145,7 @@ class ImageViewerBodyContent {
     final theme = Theme.of(context);
     final baseStyle = isTitle
         ? imageTitleTextStyle(context).copyWith(height: 1.15)
-        : imageBodyTextStyle(context);
+        : imageBodyTextStyle(context,  Theme.of(context).colorScheme.onSurface);
     final highlightBg = theme.colorScheme.onSurface;
     final highlightFg = theme.colorScheme.surface;
     final highlightStyle = baseStyle.copyWith(

@@ -122,13 +122,16 @@ class _ImageViewerBodyState extends State<ImageViewerBody> {
       widget.currentWord,
     );
 
-    final titleBlock = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
-      child: ImageViewerBodyContent.buildTitleText(
-        context,
-        widget.image.title,
-        widget.image,
-        widget.currentWord,
+    final titleBlock = DelayedDisplay(
+      slidingBeginOffset: Offset(0, 0.1),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+        child: ImageViewerBodyContent.buildTitleText(
+          context,
+          widget.image.title,
+          widget.image,
+          widget.currentWord,
+        ),
       ),
     );
 
@@ -171,12 +174,20 @@ class _ImageViewerBodyState extends State<ImageViewerBody> {
         ),
         DelayedDisplay(
           delay: const Duration(seconds: 1),
-          child: Assets.gifs.arrowDown.designImage(height: 40, width: 40, color: Theme.of(context).colorScheme.onSurface)),
+          child: Assets.gifs.arrowDown.designImage(
+            height: 40,
+            width: 40,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         AnimatedOpacity(
           opacity: widget.visible ? 1 : 0,
           duration: const Duration(milliseconds: 250),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 20,
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,

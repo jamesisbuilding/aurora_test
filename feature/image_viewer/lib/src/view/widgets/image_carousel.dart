@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:utils/utils.dart';
 import 'package:image_analysis_service/src/domain/models/image_model.dart';
 import 'package:image_viewer/src/view/widgets/image_square/image_viewer.dart';
+import 'package:utils/utils.dart';
 
 /// Ratio array granularity. E.g. 5 means [0,0,1,1,1] for 40% current / 60% next.
 const _defaultGranularity = 5;
@@ -157,12 +157,21 @@ class _ImageCarouselState extends State<ImageCarousel> {
   Widget build(BuildContext context) {
     final itemWidth = MediaQuery.sizeOf(context).width * _viewportFraction;
     return AnimatedContainer(
-      
-      duration: const Duration(seconds: 1),
-      color: _backgroundColor(context),
+      duration: const Duration(milliseconds: 250),
+      // decoration: _carouselBackgroundDecoration(context),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            (_backgroundColor(context) ??
+                    Theme.of(context).colorScheme.onSurface)
+                .withValues(alpha: 0.1),
+            (_backgroundColor(context) ??
+                Theme.of(context).colorScheme.onSurface),
+          ],
+        ),
+      ),
       height: MediaQuery.sizeOf(context).height,
       child: PageView.builder(
-        
         physics: _expandedID.isNotEmpty
             ? const NeverScrollableScrollPhysics()
             : null,
@@ -177,37 +186,95 @@ class _ImageCarouselState extends State<ImageCarousel> {
         itemBuilder: (context, index) {
           final image = widget.images[index];
           final seen = _seenIndices.contains(index);
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: itemWidth),
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 350),
-                  switchInCurve: Curves.easeIn,
-                  switchOutCurve: Curves.easeOut,
-                  child: seen
-                      ? ImageViewer(
-                          key: ValueKey('image_${image.uid}'),
-                          image: image,
-                          selected: image.uid == widget.selectedID,
-                          disabled: _expandedID.isNotEmpty,
-                          expanded:
-                              _expandedID == image.uid &&
-                              image.uid == widget.selectedID,
-                          hasEverExpanded: _hasEverExpanded,
-                          onTap: (selected) => _toggleExpanded(
-                            selected: selected,
-                            imageUID: image.uid,
-                          ),
-                        )
-                      : SizedBox(height: itemWidth, width: itemWidth),
+          return Stack(
+            children: [
+              // ParallaxClouds(visible: _expandedID.isNotEmpty),
+              // AnimatedSlide(
+              //   duration: const Duration(milliseconds: 200),
+              //   curve: Cubic(0.175, 0.885, 0.32, 1.05),
+              //   offset: _expandedID.isNotEmpty
+              //       ? const Offset(0, -0.4)
+              //       : const Offset(0, 1),
+              //   child: SizedBox(
+              //     width: MediaQuery.sizeOf(context).width,
+              //     height: MediaQuery.sizeOf(context).height,
+              //     child: Column(
+              //       children: [
+              //         WaveBg(
+              //           visible: _expandedID.isNotEmpty,
+              //           color1: _backgroundColor(context),
+              //           color2: _backgroundColor(context),
+              //         ),
+              //         Container(
+              //           color: _backgroundColor(context),
+              //           width: MediaQuery.sizeOf(context).width,
+              //           height: MediaQuery.sizeOf(context).height,
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: itemWidth),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      switchInCurve: Curves.easeIn,
+                      switchOutCurve: Curves.easeOut,
+                      child: seen
+                          ? ImageViewer(
+                              key: ValueKey('image_${image.uid}'),
+                              image: image,
+                              selected: image.uid == widget.selectedID,
+                              disabled: _expandedID.isNotEmpty,
+                              expanded:
+                                  _expandedID == image.uid &&
+                                  image.uid == widget.selectedID,
+                              hasEverExpanded: _hasEverExpanded,
+                              onTap: (selected) => _toggleExpanded(
+                                selected: selected,
+                                imageUID: image.uid,
+                              ),
+                            )
+                          : SizedBox(height: itemWidth, width: itemWidth),
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           );
         },
       ),
     );
+  }
+
+  ImageModel? get _selectedImage =>
+      widget.images.where((i) => i.uid == widget.selectedID).firstOrNull;
+
+  /// [n] shades lighter (lerp toward white).
+  Color _nShadesLighter(Color color, int n) =>
+      Color.lerp(color, Colors.white, (n * 0.06).clamp(0.0, 1.0)) ?? color;
+
+  /// [n] shades darker (lerp toward black).
+  Color _nShadesDarker(Color color, int n) =>
+      Color.lerp(color, Colors.black, (n * 0.06).clamp(0.0, 1.0)) ?? color;
+
+  Color? _waveColor1(BuildContext context) {
+    final selected = _selectedImage;
+    if (selected == null) return null;
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
+    return isLightMode ? selected.lightestColor : selected.darkestColor;
+  }
+
+  Color? _waveColor2(BuildContext context) {
+    final selected = _selectedImage;
+    if (selected == null) return null;
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
+    return isLightMode
+        ? _nShadesDarker(selected.lightestColor, 5)
+        : _nShadesLighter(selected.darkestColor, 5);
   }
 }

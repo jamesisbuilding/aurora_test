@@ -106,7 +106,7 @@ class _MainButtonState extends State<MainButton> with AnimatedPressMixin {
     return buildPressable(
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutBack,
+        curve: Cubic(0.175, 0.885, 0.32, 1.1), 
         width: widget.mode.width,
         height: widget.mode.height,
         decoration: BoxDecoration(

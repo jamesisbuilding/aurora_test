@@ -18,7 +18,7 @@ TextStyle imageTitleTextStyle(BuildContext context) {
 }
 
 /// TextStyle for image body/description in expanded view. Uses Raleway from design_system.
-TextStyle imageBodyTextStyle(BuildContext context) {
+TextStyle imageBodyTextStyle(BuildContext context, Color color) {
   final theme = Theme.of(context);
   return (theme.textTheme.bodyMedium ?? const TextStyle()).copyWith(
     fontFamily: _imageBodyFontFamily,
@@ -43,9 +43,7 @@ final ThemeData darkTheme = ThemeData(
     error: Colors.redAccent,
     onError: _white,
   ),
-  iconTheme: IconThemeData(
-    color: _white.withValues(alpha: 0.7)
-  )
+  iconTheme: IconThemeData(color: _white.withValues(alpha: 0.7)),
 );
 
 /// Light theme: white background with gold accents.
@@ -63,7 +61,5 @@ final ThemeData lightTheme = ThemeData(
     error: Colors.redAccent,
     onError: _white,
   ),
-  iconTheme: IconThemeData(
-    color: _black.withValues(alpha: 0.7)
-  )
+  iconTheme: IconThemeData(color: _black.withValues(alpha: 0.7)),
 );

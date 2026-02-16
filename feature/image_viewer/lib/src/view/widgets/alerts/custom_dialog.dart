@@ -51,7 +51,7 @@ class _GlassmorphicDialog extends StatelessWidget {
      final isLight = Theme.of(context).brightness == Brightness.light;
     // Inverted: light mode → dark popup; dark mode → light popup
     final fillColor = isLight
-        ? Colors.white.withValues(alpha: 0.2)
+        ? Colors.white.withValues(alpha: 0.5)
         : Colors.black.withValues(alpha: 0.5);
     final borderColor = isLight
         ? Colors.black.withValues(alpha: 0.2)

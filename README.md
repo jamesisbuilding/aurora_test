@@ -31,8 +31,11 @@ on a real device.
 
 ## Demo
 - Video demos: https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing  
+NOTE: I noticed a small flicker on the home button corners as the animation over-extends. I have fixed this in video 3. 
   **1. Quick demo** — Emulator; no sound and no gyro demo, but best performance for prefetching and caching.  
   **2. Polished On Device Demo** — Full product demo with gyro, tts and intro video.
+  **2. Improved Home Button** — Fixing that annoying over-extension of expansion animation.
+
 
 ---
 
