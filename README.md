@@ -6,7 +6,9 @@ IMGO is a feed-based, luxury-travel inspiration app with:
 - intro video + seamless transition into an image carousel,
 - AI-generated titles/descriptions for accessibility,
 - text-to-speech playback with word-highlighting,
-- favourites + share,
+- favourites + share
+- immersive custom gallery view 
+- color collection mini feature
 - gyroscope parallax on the selected image (collapsed and expanded, iOS/Android),
 - dynamic colour-driven UI.
 
