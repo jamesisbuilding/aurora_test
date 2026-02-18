@@ -86,7 +86,7 @@ class _ImageViewerFlowState extends State<ImageViewerFlow> {
               color: Theme.of(context).colorScheme.onSurface,
             ),
             message:
-                'You have collected your first colors! You can check out all your photos and collected colours in the gallery.',
+                'You have collected your first colors! You can check out all your photos and collected colors in the gallery.',
             onDismiss: () {},
           );
         },
