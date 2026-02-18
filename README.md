@@ -149,6 +149,7 @@ The app is best optimized for iPhone 17 Pro. Although it should run on other dev
 18. Light and Dark mode – toggle via the button at the top right
 19. Control bar – collapsible and updates to changes in selected image colors. Background loading indicator sits 8px above the control bar and moves with expand/collapse. **Scroll direction toggle:** top-left icon switches carousel between horizontal (default) and vertical scroll; indicator is centered when vertical, right-aligned when horizontal; fades in/out on position change. Hidden/collapsed until the first image arrives, then reveals and pops up to expanded.
 20. Error dialogs – glassmorphic, theme-inverted popups (dark in light mode, light in dark mode) surface fetch failures and duplicate exhaustion; retry on dismiss when no images visible
+21. Gallery view – users can open a dedicated gallery route from the image viewer, browse images in a 4x4 grid, keep hero transitions between carousel and gallery, and review collected color palettes in each tile.
 
 ### Accessibility
 
