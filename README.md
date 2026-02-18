@@ -2,19 +2,6 @@
 
 ![IMGO](screenshots/imgo.png)
 
-Flutter coding-assessment project for Aurora.
-
-I got really into this challenge and built more than required - it was genuinely fun. The full version (IMGO) is in the repo, but I want to be clear: for the actual assignment, the core features took about 4 hours. The rest was me exploring the problem space because I found it interesting. I can definitely calibrate scope for production work
-
-**Key highlights**
-- **Background prefetching** — We fetch a batch of 5 on start (first visible, rest in a queue). When the user is 2 pages from the end we prefetch 5 more in the background; when they tap "Another" we consume from the queue and refill when it drops to 1. Deduplication by URL and pixel signature with exponential backoff.
-- **Caching** — Fetched images are saved to app temp (`viewer_cache/`) and the UI prefers this local file over the network. Network URLs use `CachedNetworkImage`; the selected image is precached before showing as the button background to avoid flash.
-- **Shader-driven color interpolation** — GPU-accelerated linear interpolation of palettes across the carousel; background transitions driven by visible-image ratios.
-- **AI-augmented data** — LLM-powered titles and descriptions (ChatGPT/Gemini) for each image; accessibility-first description narration.
-- **TTS with word highlighting** — ElevenLabs-backed text-to-speech; synchronized word highlighting for immersive playback.
-- **90.9% business logic coverage** — 124 tests. Coverage measured for bloc, cubit, data, domain, utils, and DI only (excludes view layer). Includes tests for button loading cancel (TTS and manual fetch), collected colours button/sheet, scroll direction toggle, and ScrollDirectionCubit.
-- **CI** — GitHub Actions runs `flutter analyze` and `flutter test` on app, image_viewer, and share_service.
-
 IMGO is a feed-based, luxury-travel inspiration app with:
 - intro video + seamless transition into an image carousel,
 - AI-generated titles/descriptions for accessibility,
@@ -35,9 +22,19 @@ on a real device.
 
 ## Demo
 - Video demos: https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing  
-  **1. Main video** — video demoing full flow
-  **2. Archive** - previous videos of implementation as backlog
+  **1. Main video** — video demoing full flow  
+  **2. Archive** - previous videos of implementation as backlog  
 
+I got really into this challenge and built more than required - it was genuinely fun. The full version (IMGO) is in the repo, but I want to be clear: for the actual assignment, the core features took about 2-3 hours. The rest was me exploring the problem space because I found it interesting. I can definitely calibrate scope for production work
+
+**Key highlights**
+- **Background prefetching** — We fetch a batch of 5 on start (first visible, rest in a queue). When the user is 2 pages from the end we prefetch 5 more in the background; when they tap "Another" we consume from the queue and refill when it drops to 1. Deduplication by URL and pixel signature with exponential backoff.
+- **Caching** — Fetched images are saved to app temp (`viewer_cache/`) and the UI prefers this local file over the network. Network URLs use `CachedNetworkImage`; the selected image is precached before showing as the button background to avoid flash.
+- **Shader-driven color interpolation** — GPU-accelerated linear interpolation of palettes across the carousel; background transitions driven by visible-image ratios.
+- **AI-augmented data** — LLM-powered titles and descriptions (ChatGPT/Gemini) for each image; accessibility-first description narration.
+- **TTS with word highlighting** — ElevenLabs-backed text-to-speech; synchronized word highlighting for immersive playback.
+- **90.9% business logic coverage** — 124 tests. Coverage measured for bloc, cubit, data, domain, utils, and DI only (excludes view layer). Includes tests for button loading cancel (TTS and manual fetch), collected colours button/sheet, scroll direction toggle, and ScrollDirectionCubit.
+- **CI** — GitHub Actions runs `flutter analyze` and `flutter test` on app, image_viewer, and share_service.
 
 ---
 
