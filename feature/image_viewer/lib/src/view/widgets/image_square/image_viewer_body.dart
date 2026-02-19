@@ -13,6 +13,7 @@ class ImageViewerBody extends StatefulWidget {
   final ImageModel image;
   final TtsCurrentWord? currentWord;
   final Function(bool) onColorsExpanded;
+  final VoidCallback? onCollapseRequested;
   final bool visible;
   final ScrollController? scrollController;
   final int? paragraphCount;
@@ -21,6 +22,7 @@ class ImageViewerBody extends StatefulWidget {
     super.key,
     required this.image,
     required this.onColorsExpanded,
+    this.onCollapseRequested,
     required this.visible,
     this.currentWord,
     this.scrollController,
@@ -32,9 +34,11 @@ class ImageViewerBody extends StatefulWidget {
 }
 
 class _ImageViewerBodyState extends State<ImageViewerBody> {
+  static const _collapseOverscrollThreshold = -20.0;
   bool? _contentFitsViewport;
   int _maxRevealedIndex = -1;
   final Set<int> _hapticForBlockIndices = {};
+  bool _didRequestCollapseFromOverscroll = false;
   ScrollController? get _scroll => widget.scrollController;
 
   @override
@@ -92,12 +96,26 @@ class _ImageViewerBodyState extends State<ImageViewerBody> {
   }
 
   void _onScroll() {
-    if (!mounted || _contentFitsViewport != false || _scroll == null) return;
-    if (!_scroll!.hasClients) return;
+    if (!mounted || _scroll == null || !_scroll!.hasClients) return;
     final position = _scroll!.position;
+    final offset = position.pixels;
+
+    if (offset <= _collapseOverscrollThreshold) {
+      if (!_didRequestCollapseFromOverscroll) {
+        _didRequestCollapseFromOverscroll = true;
+        widget.onCollapseRequested?.call();
+      }
+      return;
+    }
+    if (offset >= 0 && _didRequestCollapseFromOverscroll) {
+      _didRequestCollapseFromOverscroll = false;
+    }
+
+    if (_contentFitsViewport != false) return;
+
     final viewportHeight = position.viewportDimension;
     final step = viewportHeight * scrollRevealFraction;
-    final scrollOffset = position.pixels;
+    final scrollOffset = offset;
     final revealed = step <= 0 ? 999 : (scrollOffset / step).floor();
     if (revealed > _maxRevealedIndex) {
       for (var i = _maxRevealedIndex + 1; i <= revealed; i++) {

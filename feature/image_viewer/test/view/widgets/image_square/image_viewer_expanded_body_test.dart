@@ -7,6 +7,7 @@ import 'package:image_viewer/src/cubit/cubit.dart';
 import 'package:image_viewer/src/view/widgets/image_square/image_viewer.dart'
     as iv;
 import 'package:image_viewer/src/view/widgets/image_square/image_viewer_body.dart';
+import 'package:image_viewer/src/view/widgets/text/animated_text_fill.dart';
 
 import '../../../cubit/fakes/fake_tts_service.dart';
 import '../../../data/fakes/fake_image_analysis_service.dart';
@@ -57,27 +58,6 @@ void main() {
     );
   }
 
-  /// Collects all TextSpans with non-empty text from a RichText.
-  List<TextSpan> collectWordSpans(InlineSpan root) {
-    final spans = <TextSpan>[];
-    void visit(InlineSpan span) {
-      if (span is TextSpan) {
-        if (span.text != null &&
-            span.text!.isNotEmpty &&
-            span.text != ' ' &&
-            span.text != '"') {
-          spans.add(span);
-        }
-        for (final c in span.children ?? <InlineSpan>[]) {
-          visit(c);
-        }
-      }
-    }
-
-    visit(root);
-    return spans;
-  }
-
   group('ImageViewer expanded body', () {
     testWidgets('body only appears when expanded', (tester) async {
       final image = testImage('uid1', 'sig1');
@@ -119,7 +99,12 @@ void main() {
         buildTestHarness(
           child: ImageViewerBody(
             image: image,
-            currentWord: (word: 'Second', isTitle: true, wordIndex: 1),
+            currentWord: (
+              word: 'Second',
+              isTitle: true,
+              wordIndex: 1,
+              wordDurationMs: 220,
+            ),
             visible: true,
             onColorsExpanded: (_) {},
           ),
@@ -127,17 +112,13 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 300));
 
-      final richTexts = tester.widgetList<RichText>(find.byType(RichText));
-      expect(richTexts.length, greaterThanOrEqualTo(1));
-
-      final titleRichText = richTexts.first;
-      final wordSpans = collectWordSpans(titleRichText.text);
-      expect(wordSpans.map((s) => s.text), containsAll(['First', 'Second', 'Third']));
-
-      final highlightedSpans =
-          wordSpans.where((s) => s.style?.backgroundColor != null).toList();
-      expect(highlightedSpans.length, 1);
-      expect(highlightedSpans.single.text, 'Second');
+      final animatedWords =
+          tester.widgetList<AnimatedSubtitleWord>(find.byType(AnimatedSubtitleWord)).toList();
+      expect(animatedWords.map((w) => w.text), containsAll(['First', 'Second', 'Third']));
+      final highlightedWords = animatedWords.where((w) => w.isActive).toList();
+      expect(highlightedWords.length, 1);
+      expect(highlightedWords.single.text, 'Second');
+      expect(highlightedWords.single.duration, const Duration(milliseconds: 220));
     });
 
     testWidgets('title vs description index mapping displays expected '
@@ -148,7 +129,12 @@ void main() {
         buildTestHarness(
           child: ImageViewerBody(
             image: image,
-            currentWord: (word: 'A', isTitle: true, wordIndex: 1),
+            currentWord: (
+              word: 'A',
+              isTitle: true,
+              wordIndex: 1,
+              wordDurationMs: 220,
+            ),
             visible: true,
             onColorsExpanded: (_) {},
           ),
@@ -156,9 +142,9 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 300));
 
-      var richTexts = tester.widgetList<RichText>(find.byType(RichText));
-      var titleSpans = collectWordSpans(richTexts.first.text);
-      var highlighted = titleSpans.where((s) => s.style?.backgroundColor != null);
+      var animatedWords =
+          tester.widgetList<AnimatedSubtitleWord>(find.byType(AnimatedSubtitleWord)).toList();
+      var highlighted = animatedWords.where((w) => w.isActive);
       expect(highlighted.length, 1);
       expect(highlighted.single.text, 'A');
 
@@ -166,7 +152,12 @@ void main() {
         buildTestHarness(
           child: ImageViewerBody(
             image: image,
-            currentWord: (word: 'X', isTitle: false, wordIndex: 1),
+            currentWord: (
+              word: 'X',
+              isTitle: false,
+              wordIndex: 1,
+              wordDurationMs: 220,
+            ),
             visible: true,
             onColorsExpanded: (_) {},
           ),
@@ -174,13 +165,9 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 300));
 
-      final descRichTexts =
-          tester.widgetList<RichText>(find.byType(RichText)).toList();
-      final descRichText =
-          descRichTexts.length >= 2 ? descRichTexts[1] : descRichTexts.first;
-      final descSpans = collectWordSpans(descRichText.text);
-      final descHighlighted =
-          descSpans.where((s) => s.style?.backgroundColor != null);
+      final descWords =
+          tester.widgetList<AnimatedSubtitleWord>(find.byType(AnimatedSubtitleWord)).toList();
+      final descHighlighted = descWords.where((w) => w.isActive);
       expect(descHighlighted.length, 1);
       expect(descHighlighted.single.text, 'X');
     });

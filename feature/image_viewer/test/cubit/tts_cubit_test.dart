@@ -53,7 +53,12 @@ void main() {
       unawaited(cubit.play('Title', 'Description'));
       await Future<void>.delayed(Duration(milliseconds: 50));
 
-      fakeTtsService.emitWord((word: 'hello', isTitle: true, wordIndex: 0));
+      fakeTtsService.emitWord((
+        word: 'hello',
+        isTitle: true,
+        wordIndex: 0,
+        wordDurationMs: 220,
+      ));
       await Future<void>.delayed(Duration.zero);
 
       fakeTtsService.triggerPlaybackComplete();
@@ -154,13 +159,33 @@ void main() {
       unawaited(cubit.play('One Two', 'Alpha Beta'));
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
-      fakeTtsService.emitWord((word: 'One', isTitle: true, wordIndex: 0));
+      fakeTtsService.emitWord((
+        word: 'One',
+        isTitle: true,
+        wordIndex: 0,
+        wordDurationMs: 220,
+      ));
       await Future<void>.delayed(Duration.zero);
-      fakeTtsService.emitWord((word: 'Two', isTitle: true, wordIndex: 1));
+      fakeTtsService.emitWord((
+        word: 'Two',
+        isTitle: true,
+        wordIndex: 1,
+        wordDurationMs: 220,
+      ));
       await Future<void>.delayed(Duration.zero);
-      fakeTtsService.emitWord((word: 'Alpha', isTitle: false, wordIndex: 0));
+      fakeTtsService.emitWord((
+        word: 'Alpha',
+        isTitle: false,
+        wordIndex: 0,
+        wordDurationMs: 220,
+      ));
       await Future<void>.delayed(Duration.zero);
-      fakeTtsService.emitWord((word: 'Beta', isTitle: false, wordIndex: 1));
+      fakeTtsService.emitWord((
+        word: 'Beta',
+        isTitle: false,
+        wordIndex: 1,
+        wordDurationMs: 220,
+      ));
       await Future<void>.delayed(Duration.zero);
 
       expect(wordsSeen.map((w) => w.word), ['One', 'Two', 'Alpha', 'Beta']);

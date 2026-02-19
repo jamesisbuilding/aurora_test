@@ -256,7 +256,13 @@ TtsCurrentWord? _currentWordAtPosition(
     if (positionSec >= w.start && positionSec < w.end) {
       final isTitle = w.index < titleWordCount;
       final wordIndex = isTitle ? w.index : w.index - titleWordCount;
-      return (word: w.word, isTitle: isTitle, wordIndex: wordIndex);
+      final durationMs = ((w.end - w.start) * 1000).round().clamp(1, 10000);
+      return (
+        word: w.word,
+        isTitle: isTitle,
+        wordIndex: wordIndex,
+        wordDurationMs: durationMs,
+      );
     }
   }
   return null;

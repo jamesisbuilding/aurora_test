@@ -5,6 +5,7 @@
 
 # Local AI / tooling metadata
 .claude/
+app/.deps.json
 
 # IDE
 .vscode/

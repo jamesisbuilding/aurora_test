@@ -4,4 +4,5 @@ typedef TtsCurrentWord = ({
   String word,
   bool isTitle,
   int wordIndex,
+  int wordDurationMs,
 });
