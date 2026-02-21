@@ -22,9 +22,10 @@ flutter run --profile
 on a real device.
 
 
-## Demo
+## Demo - Please Read
 - Video demos: https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing  
-  **1. Main video** — video demoing full flow  
+  **1. Main video** — video demoing full flow
+  **2. Luxury UI** - I have completely redesigned the app for a more luxury feel, using the same logic as my initial submission.
   **2. Archive** - previous videos of implementation as backlog  
 
 I got really into this challenge and built more than required - it was genuinely fun. The full version (IMGO) is in the repo, but I want to be clear: for the actual assignment, the core features took about 2-3 hours. The rest was me exploring the problem space because I found it interesting. I can definitely calibrate scope for production work
