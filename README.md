@@ -26,7 +26,7 @@ on a real device.
 - Video demos: https://drive.google.com/drive/folders/1iASAfGXv4h4pXNdNDrNEwNQArccPV5KO?usp=sharing  
   **1. Main video** — video demoing full flow
   
-  **2. Luxury UI** - I have completely redesigned the app for a more luxury feel, using the same logic as my initial submission.
+  **2. Showcase UI** - I have completely redesigned the app for a more luxury / artistic feel, using the same logic as my initial submission.
   
   **3. Archive** - previous videos of implementation as backlog  
 
