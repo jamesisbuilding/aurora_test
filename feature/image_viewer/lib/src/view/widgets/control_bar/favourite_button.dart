@@ -35,8 +35,8 @@ class FavouriteStarButton extends StatelessWidget {
             }
           },
           icon: Assets.icons.star.designImage(
-            height: 28,
-            width: 28,
+            height: 20,
+            width: 20,
             color: isFavourite ? favouriteColor : theme.colorScheme.onSurface,
           ),
         );

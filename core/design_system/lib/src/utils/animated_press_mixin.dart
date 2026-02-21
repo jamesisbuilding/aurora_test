@@ -31,6 +31,11 @@ mixin AnimatedPressMixin<T extends StatefulWidget> on State<T> {
   /// Override this to handle the tap callback.
   void onPressComplete();
 
+  /// Called when a press and hold (long press) completes.
+  /// Override this to handle long-press logic.
+  /// Default does nothing.
+  void onLongPressComplete() {}
+
   @override
   void initState() {
     super.initState();
@@ -73,14 +78,33 @@ mixin AnimatedPressMixin<T extends StatefulWidget> on State<T> {
     onPressComplete();
   }
 
-  Widget buildPressable({required Widget child, bool enableScale = true}) {
+  Future<void> handleOnLongPress() async {
+    handleTapDown();
+    // The long press default duration is 500ms in Flutter, but you can adjust if needed
+    await Future.delayed(Duration(milliseconds: 400));
+    handleTapUp();
+    onLongPressComplete();
+  }
+
+  /// Optionally, you can pass your own `onLongPressComplete` if you do not override the method
+  Widget buildPressable({
+    required Widget child,
+    bool enableScale = true,
+    VoidCallback? onLongPressCompleteOverride,
+  }) {
     return Listener(
       behavior: HitTestBehavior.opaque,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+      child: InkWell(
+        splashColor: Colors.transparent,
+      
         onTap: () async => await handleOnTap(),
         onTapCancel: handleTapCancel,
         onTapDown: (_) => handleTapDown(),
+        onLongPress: () async {
+          await handleOnLongPress();
+          // If the override is provided, call it, otherwise fall back to the mixin's method
+          (onLongPressCompleteOverride ?? onLongPressComplete)();
+        },
         child: enableScale
             ? AnimatedScale(
                 scale: _expanded ? 1.0 : pressedScale,

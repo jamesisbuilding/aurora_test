@@ -188,32 +188,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
           final seen = _seenIndices.contains(index);
           return Stack(
             children: [
-              // ParallaxClouds(visible: _expandedID.isNotEmpty),
-              // AnimatedSlide(
-              //   duration: const Duration(milliseconds: 200),
-              //   curve: Cubic(0.175, 0.885, 0.32, 1.05),
-              //   offset: _expandedID.isNotEmpty
-              //       ? const Offset(0, -0.4)
-              //       : const Offset(0, 1),
-              //   child: SizedBox(
-              //     width: MediaQuery.sizeOf(context).width,
-              //     height: MediaQuery.sizeOf(context).height,
-              //     child: Column(
-              //       children: [
-              //         WaveBg(
-              //           visible: _expandedID.isNotEmpty,
-              //           color1: _backgroundColor(context),
-              //           color2: _backgroundColor(context),
-              //         ),
-              //         Container(
-              //           color: _backgroundColor(context),
-              //           width: MediaQuery.sizeOf(context).width,
-              //           height: MediaQuery.sizeOf(context).height,
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
+             
               Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),

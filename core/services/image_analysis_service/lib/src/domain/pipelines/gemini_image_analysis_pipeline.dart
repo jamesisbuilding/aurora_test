@@ -55,12 +55,28 @@ class GeminiImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
       return ImageCaptionResult(
         title: map['title'] as String? ?? 'No title',
         description: map['description'] as String? ?? 'No Caption',
+        founderName: map['founder name'] as String? ?? '',
+        founderDescription: map['founder description'] as String? ?? '',
+        description2: map['description 2'] as String? ?? '',
+        hypeBuildingTagline1: map['hype building tag line #1'] as String? ?? '',
+        hypeBuildingTagline2: map['hype building tag line #2'] as String? ?? '',
+        hypeBuildingTagline3: map['hype building tag line #3'] as String? ?? '',
+        hypeBuildingTagline4: map['hype building tag line #4'] as String? ?? '',
+        hypeBuildingTagline5: map['hype building tag line #5'] as String? ?? '',
       );
     } catch (e, stack) {
       debugPrint('[GeminiImageAnalysisPipeline] Error: $e\n$stack');
       return const ImageCaptionResult(
         title: 'Error',
         description: 'Could not generate story',
+        founderName: '',
+        founderDescription: '',
+        description2: '',
+        hypeBuildingTagline1: '',
+        hypeBuildingTagline2: '',
+        hypeBuildingTagline3: '',
+        hypeBuildingTagline4: '',
+        hypeBuildingTagline5: '',
       );
     }
   }

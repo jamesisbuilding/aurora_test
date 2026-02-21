@@ -28,14 +28,14 @@ class ImageViewerSquare extends StatelessWidget {
     return _buildFavouriteOverlay(
       context,
       Material(
-        elevation: 10,
+        elevation: 0,
         shadowColor: darkestColor ?? Theme.of(context).colorScheme.surface,
 
-        borderRadius: BorderRadius.circular(12),
+        // borderRadius: BorderRadius.circular(12),
         color: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
+            // borderRadius: BorderRadius.circular(12),
             color: Theme.of(context).cardColor,
           ),
           child: _buildImageContent(context),
@@ -53,14 +53,14 @@ class ImageViewerSquare extends StatelessWidget {
           CachedImage(
             url: networkPath,
             fit: BoxFit.cover,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(0),
           ),
 
         if (localPath.isNotEmpty)
           Opacity(
             opacity: 0.5,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(0),
               child: Image.file(
                 File(localPath),
                 fit: BoxFit.cover,

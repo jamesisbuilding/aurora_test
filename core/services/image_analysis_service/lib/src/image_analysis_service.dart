@@ -60,19 +60,25 @@ class ImageAnalysisService {
 
       List<Color> colorPalette = results[0] as List<Color>;
       final caption = results[1] as ImageCaptionResult;
-      final String title = caption.title;
-      final String description = caption.description;
 
       final model = ImageModel(
         uid: imageID,
-        title: title,
-        description: description,
+        title: caption.title,
+        description: caption.description,
         isFavourite: false,
         url: imageURL,
         colorPalette: colorPalette,
         localPath: localPath,
         byteList: imageBytes,
         pixelSignature: contentHash,
+        founderName: caption.founderName,
+        founderDescription: caption.founderDescription,
+        description2: caption.description2,
+        hypeBuildingTagline1: caption.hypeBuildingTagline1,
+        hypeBuildingTagline2: caption.hypeBuildingTagline2,
+        hypeBuildingTagline3: caption.hypeBuildingTagline3,
+        hypeBuildingTagline4: caption.hypeBuildingTagline4,
+        hypeBuildingTagline5: caption.hypeBuildingTagline5,
       );
       if (model.url.isEmpty) {
         return Failure('Analysis returned empty model');

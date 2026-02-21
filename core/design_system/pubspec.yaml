@@ -39,6 +39,11 @@ flutter:
     - assets/video/
     - assets/fonts/
     - assets/gifs/
+    - assets/images/lake/
+    - assets/images/mountain/
+    - assets/images/nike/
+    - assets/images/road/
+    - assets/images/space/
 
   fonts:
     - family: YesevaOne
@@ -53,3 +58,4 @@ flutter_gen:
   assets:
     outputs:
       package_parameter_enabled: true
+

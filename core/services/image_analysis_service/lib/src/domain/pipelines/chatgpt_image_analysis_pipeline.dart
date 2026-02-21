@@ -30,9 +30,41 @@ class ChatGptImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
   }
 
   static final String _prompt = '''
-  You are to describe the image attached and return a JSON object accurately telling what this image represents in terms of a high-networth excursion. 
-  This is for ultra rich, so explain as if it's for them. Max 100 words.
-  The JSON schema is as follows : {'title': your title, 'description': your description}. No markdown, striclty JSON output''';
+  You are to create an artistic interpretation of the image provided return strings that give a vibe of luxury and artistry without sounding cliche. 
+  Each image is an experience or event a rich person can buy. 
+
+  You are to return: 
+
+  title (max 3 words) - an abstract yet relevant title of what the image represents.
+  description (max 40 words) - an small artistic description
+  founder name (max 3 words) - The name of the person who founded this event, this person's name is unisex. 
+  founder description (max 30-40 words) - a description of the founder
+  description 2 (max 60 words) - a more in depth description of the event, as if the user has just seen 4 more images of the event 
+  hype building tag line #1 (max 2 words including spaces) - the first in a list of hype up tag lines seen by the user about the event
+  hype building tag line #2 (max 2 words including spaces) - the second in a list of hype up tag lines seen by the user about the event
+  hype building tag line #3 (max 2 words including spaces) - the third in a list of hype up tag lines seen by the user about the event
+  hype building tag line #4 (max 2 words including spaces) - the fourth in a list of hype up tag lines seen by the user about the event
+  hype building tag line #5 (max 2 words including spaces) - the firth in a list of hype up tag lines seen by the user about the event
+
+Return your answer in the following JSON format, with the keys exactly as shown:
+{
+  "title": "",
+  "description": "",
+  "founder name": "",
+  "founder description": "",
+  "description 2": "",
+  "hype building tag line #1": "",
+  "hype building tag line #2": "",
+  "hype building tag line #3": "",
+  "hype building tag line #4": "",
+  "hype building tag line #5": ""
+}
+''';
+  
+  // '''
+  // You are to describe the image attached and return a JSON object accurately telling what this image represents in terms of a high-networth excursion. 
+  // This is for ultra rich, so explain as if it's for them. Max 100 words.
+  // The JSON schema is as follows : {'title': your title, 'description': your description}. No markdown, striclty JSON output''';
 
   @override
   Future<ImageCaptionResult> analyzeImage({
@@ -46,7 +78,15 @@ class ChatGptImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
       }
       return const ImageCaptionResult(
         title: 'Error',
-        description: 'API key not configured',
+        description: '',
+        founderName: '',
+        founderDescription: '',
+        description2: '',
+        hypeBuildingTagline1: '',
+        hypeBuildingTagline2: '',
+        hypeBuildingTagline3: '',
+        hypeBuildingTagline4: '',
+        hypeBuildingTagline5: '',
       );
     }
     try {
@@ -86,12 +126,28 @@ class ChatGptImageAnalysisPipeline implements AbstractImageAnalysisPipeline {
       return ImageCaptionResult(
         title: map['title'] as String? ?? 'No title',
         description: map['description'] as String? ?? 'No description',
+        founderName: map['founder name'] as String? ?? '',
+        founderDescription: map['founder description'] as String? ?? '',
+        description2: map['description 2'] as String? ?? '',
+        hypeBuildingTagline1: map['hype building tag line #1'] as String? ?? '',
+        hypeBuildingTagline2: map['hype building tag line #2'] as String? ?? '',
+        hypeBuildingTagline3: map['hype building tag line #3'] as String? ?? '',
+        hypeBuildingTagline4: map['hype building tag line #4'] as String? ?? '',
+        hypeBuildingTagline5: map['hype building tag line #5'] as String? ?? '',
       );
     } catch (e, stack) {
       if (kDebugMode) debugPrint('[ChatGptImageAnalysisPipeline] Error: $e\n$stack');
       return const ImageCaptionResult(
         title: 'Error',
         description: 'Could not generate description',
+        founderName: '',
+        founderDescription: '',
+        description2: '',
+        hypeBuildingTagline1: '',
+        hypeBuildingTagline2: '',
+        hypeBuildingTagline3: '',
+        hypeBuildingTagline4: '',
+        hypeBuildingTagline5: '',
       );
     }
   }

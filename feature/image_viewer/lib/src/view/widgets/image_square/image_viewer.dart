@@ -219,21 +219,15 @@ class _HeroFlightImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      elevation: 10,
-      shadowColor: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(12),
-      color: Colors.transparent,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: url.isEmpty
-            ? ColoredBox(color: Theme.of(context).colorScheme.onSurface)
-            : CachedImage(
-                url: url,
-                fit: BoxFit.cover,
-                borderRadius: BorderRadius.circular(12),
-              ),
-      ),
+    return ClipRRect(
+      // borderRadius: BorderRadius.circular(12),
+      child: url.isEmpty
+          ? ColoredBox(color: Theme.of(context).colorScheme.onSurface)
+          : CachedImage(
+              url: url,
+              fit: BoxFit.cover,
+              // borderRadius: BorderRadius.circular(12),
+            ),
     );
   }
 }

@@ -9,6 +9,7 @@ part 'image_model.freezed.dart';
 abstract class ImageModel with _$ImageModel {
   const ImageModel._();
 
+  /// Added: All fields as per chatgpt_image_analysis_pipeline.dart (lines 50-61)
   const factory ImageModel({
     required String uid,
     required String title,
@@ -19,6 +20,15 @@ abstract class ImageModel with _$ImageModel {
     required String localPath,
     Uint8List? byteList,
     required String pixelSignature,
+    // New fields corresponding to GPT image pipeline
+    required String founderName,
+    required String founderDescription,
+    required String description2,
+    required String hypeBuildingTagline1,
+    required String hypeBuildingTagline2,
+    required String hypeBuildingTagline3,
+    required String hypeBuildingTagline4,
+    required String hypeBuildingTagline5,
   }) = _ImageModel;
 
   /// Contrast ratio threshold (WCAG AAA). Minimum 7:1 for accessibility.
@@ -73,5 +83,13 @@ abstract class ImageModel with _$ImageModel {
         localPath: '',
         byteList: null,
         pixelSignature: '',
+        founderName: '',
+        founderDescription: '',
+        description2: '',
+        hypeBuildingTagline1: '',
+        hypeBuildingTagline2: '',
+        hypeBuildingTagline3: '',
+        hypeBuildingTagline4: '',
+        hypeBuildingTagline5: '',
       );
 }

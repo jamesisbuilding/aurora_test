@@ -68,6 +68,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/gallery.png
   AssetGenImage get gallery => const AssetGenImage('assets/icons/gallery.png');
 
+  /// File path: assets/icons/imgo_travel_seal.png
+  AssetGenImage get imgoTravelSeal =>
+      const AssetGenImage('assets/icons/imgo_travel_seal.png');
+
   /// File path: assets/icons/moon.png
   AssetGenImage get moon => const AssetGenImage('assets/icons/moon.png');
 
@@ -83,16 +87,21 @@ class $AssetsIconsGen {
   /// File path: assets/icons/trash.png
   AssetGenImage get trash => const AssetGenImage('assets/icons/trash.png');
 
+  /// File path: assets/icons/x.png
+  AssetGenImage get x => const AssetGenImage('assets/icons/x.png');
+
   /// List of all assets
   List<AssetGenImage> get values => [
     arrowDownUp,
     carousel,
     gallery,
+    imgoTravelSeal,
     moon,
     send,
     star,
     sun,
     trash,
+    x,
   ];
 }
 

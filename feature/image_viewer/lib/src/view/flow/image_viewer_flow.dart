@@ -6,6 +6,7 @@ import 'package:image_viewer/src/bloc/image_viewer_bloc.dart';
 import 'package:image_viewer/src/bloc/image_viewer_event.dart';
 import 'package:image_viewer/src/cubit/cubit.dart';
 import 'package:image_viewer/src/di/image_viewer_app_services.dart';
+import 'package:image_viewer/src/view/new/image_carousel_new.dart';
 import 'package:image_viewer/src/view/pages/image_viewer_main_view.dart';
 import 'package:image_viewer/src/view/pages/video_view.dart';
 import 'package:image_viewer/src/view/widgets/alerts/custom_dialog.dart';
@@ -95,35 +96,35 @@ class _ImageViewerFlowState extends State<ImageViewerFlow> {
           children: [
             // Bottom layer: image viewer preloads whilst video plays
             Positioned.fill(
-              child: widget.bottomLayer ??
-                  ImageViewerScreen(
-                    onThemeToggle: onThemeToggle,
-                    onShareTap: onShareTap,
-                    onOpenGalleryRoute: onOpenGalleryRoute,
-                    videoComplete: _videoComplete,
-                  ),
+              child:  ImageCarouselNew()
+                  // ImageViewerScreen(
+                  //   onThemeToggle: onThemeToggle,
+                  //   onShareTap: onShareTap,
+                  //   onOpenGalleryRoute: onOpenGalleryRoute,
+                  //   videoComplete: _videoComplete,
+                  // ),
             ),
-            Transform.scale(
-              scale: 1.12,
-              child: Transform.translate(
-                offset: Offset(0, -20),
-                child: IgnorePointer(
-                  ignoring: _videoComplete,
-                  child: AnimatedOpacity(
-                    opacity: _videoComplete ? 0 : 1,
-                    duration: _fadeDuration,
-                    child: ColoredBox(
-                      color: Colors.black,
-                      child: Center(
-                        child: widget.overlayBuilder != null
-                            ? widget.overlayBuilder!(_onVideoComplete)
-                            : VideoView(onVideoComplete: _onVideoComplete),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // Transform.scale(
+            //   scale: 1.12,
+            //   child: Transform.translate(
+            //     offset: Offset(0, -20),
+            //     child: IgnorePointer(
+            //       ignoring: _videoComplete,
+            //       child: AnimatedOpacity(
+            //         opacity: _videoComplete ? 0 : 1,
+            //         duration: _fadeDuration,
+            //         child: ColoredBox(
+            //           color: Colors.black,
+            //           child: Center(
+            //             child: widget.overlayBuilder != null
+            //                 ? widget.overlayBuilder!(_onVideoComplete)
+            //                 : VideoView(onVideoComplete: _onVideoComplete),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),

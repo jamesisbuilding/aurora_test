@@ -111,21 +111,21 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                if (canShowContent &&
-                    images != null &&
-                    selectedImage != null) ...[
-                  if (widget.isLoaded)
-                    BlendedColorsSync(
-                      selectedImage: selectedImage,
-                      onSync: (colors) =>
-                          widget.blendedColorsNotifier.value = colors,
-                    ),
+                // if (canShowContent &&
+                //     images != null &&
+                //     selectedImage != null) ...[
+                //   if (widget.isLoaded)
+                //     BlendedColorsSync(
+                //       selectedImage: selectedImage,
+                //       onSync: (colors) =>
+                //           widget.blendedColorsNotifier.value = colors,
+                //     ),
                   Positioned.fill(
                     child: AnimatedBackground(
                       colorsListenable: widget.blendedColorsNotifier,
                     ),
                   ),
-                ],
+                // ],
 
                 if (canShowContent &&
                     images != null &&
@@ -142,10 +142,10 @@ class CarouselControllerScopeState extends State<CarouselControllerScope> {
                     onExpanded: (expanded) => widget.onExpanded(expanded),
                   ),
 
-                BackgroundLoadingIndicator(
-                  key: ValueKey('carousel_loading_${widget.expandedView}'),
-                  visibleWhen: (state) => state.visibleImages.isEmpty,
-                ),
+                // BackgroundLoadingIndicator(
+                //   key: ValueKey('carousel_loading_${widget.expandedView}'),
+                //   visibleWhen: (state) => state.visibleImages.isEmpty,
+                // ),
               ],
             ),
           ),

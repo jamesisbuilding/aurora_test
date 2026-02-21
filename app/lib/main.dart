@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       builder: (context, _) => MaterialApp.router(
         title: 'Aurora Demo',
         debugShowCheckedModeBanner: false,
-
+        // showPerformanceOverlay: true,
         theme: lightTheme,
         darkTheme: darkTheme,
         themeMode: themeNotifier.themeMode,
